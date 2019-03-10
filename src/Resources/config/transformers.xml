@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+  <services>
+    <service id="api_platform.configuration_converter.command.api_resource_convert_configuration_command" class="ApiPlatform\ConfigurationConverter\Command\ConverterCommand" autowire="true" autoconfigure="true" public="false">
+      <argument type="service" id="api_platform.configuration_converter.data_transformers.xml_transformer" />
+      <argument>%api_platform.configuration_converter.default_export_dir%</argument>
+    </service>
+
+    <service id="api_platform.configuration_converter.data_transformers.xml_transformer" class="ApiPlatform\ConfigurationConverter\DataTransformers\XmlTransformer" autowire="true" public="false">
+      <argument type="service" id="api_platform.metadata.resource.metadata_factory.annotation"/>
+      <argument type="service" id="api_platform.metadata.property.metadata_factory.annotation"/>
+      <argument type="service" id="api_platform.metadata.resource.filter_metadata_factory.annotation"/>
+      <argument type="service" id="api_platform.filter_locator"/>
+    </service>
+  </services>
+</container>

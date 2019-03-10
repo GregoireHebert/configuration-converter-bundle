@@ -1,0 +1,80 @@
+framework:
+    secret:                           'gregoire_hebert'
+    validation:
+        enable_annotations:            true
+    serializer:
+        enable_annotations:            true
+    test:                              ~
+    session:
+        storage_id:                    'session.storage.mock_file'
+    form:                              ~ # For FOSUser
+    templating:
+        engines:                       ['twig'] # For Swagger UI
+    profiler:
+        enabled:                        true
+        collect:                        false
+
+doctrine:
+    dbal:
+        driver:                       'pdo_sqlite'
+        path:                         '%kernel.cache_dir%/db.sqlite'
+        charset:                      'UTF8'
+
+    orm:
+        auto_generate_proxy_classes:   '%kernel.debug%'
+        auto_mapping:                  true
+
+api_platform:
+    title:                             'My Dummy API'
+    description: |
+        This is a test API.
+        Made with love
+    mapping:
+        paths: ['%kernel.project_dir%/../Entity']
+    allow_plain_identifiers:           true
+    formats:
+        jsonld:                        ['application/ld+json']
+        jsonhal:                       ['application/hal+json']
+        jsonapi:                       ['application/vnd.api+json']
+        xml:                           ['application/xml', 'text/xml']
+        json:                          ['application/json']
+        html:                          ['text/html']
+    error_formats:
+        jsonproblem:                   ['application/problem+json']
+        jsonld:                        ['application/ld+json']
+        jsonapi:                       ['application/vnd.api+json']
+    graphql:                           true
+    name_converter:                    'app.name_converter'
+    enable_fos_user:                   true
+    collection:
+        order_parameter_name:          'order'
+        order:                         'ASC'
+        pagination:
+            client_enabled:            true
+            client_items_per_page:     true
+            client_partial:            true
+            items_per_page:            3
+    exception_to_status:
+        Symfony\Component\Serializer\Exception\ExceptionInterface: !php/const Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+        ApiPlatform\Core\Exception\InvalidArgumentException: !php/const Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+        ApiPlatform\Core\Exception\FilterValidationException: !php/const Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+    http_cache:
+        invalidation:
+            enabled: true
+        max_age:        60
+        shared_max_age: 3600
+        vary:           ['Accept', 'Cookie']
+        public:         true
+
+parameters:
+    container.autowiring.strict_mode: true
+    container.dumper.inline_class_loader: true
+
+services:
+    tag.name_filter:
+        parent: 'api_platform.doctrine.orm.search_filter'
+        arguments: [ { name: 'ipartial' } ]
+        tags:  [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false

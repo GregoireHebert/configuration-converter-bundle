@@ -1,0 +1,8 @@
+parameters:
+    autoload_files:
+        - tests/Fixtures/App/AppKernel.php
+    excludes_analyse:
+        - tests/Fixtures/App/var/cache
+        - src/DependencyInjection/Configuration.php
+    ignoreErrors:
+        - '#Call to an undefined method Prophecy\\Prophecy\\ObjectProphecy(|.*)?::[a-zA-Z0-9_]+\(\)#'
