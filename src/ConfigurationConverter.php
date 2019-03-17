@@ -34,8 +34,8 @@ class ConfigurationConverter
         $newFormat = $transformer->transform($resourceClass);
         $extra = '';
 
-        if ($transformer instanceof XmlTransformer && $exportPath) {
-            $this->export("$shortName.services", $transformer->getFiltersServiceDefinition(), $exportPath);
+        if ($transformer instanceof XmlTransformer && $exportPath && null !== $services = $transformer->getFiltersServiceDefinition()) {
+            $this->export("$shortName.services", $services, $exportPath);
             $extra = <<<TXT
 # config/packages/api-platform/$shortName.services.$format
 

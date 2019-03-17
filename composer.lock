@@ -668,12 +668,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "6d4484cd4bbddc28541bebd546dba60bc9331767"
+                "reference": "2a9e82faffef4b575f44062917582e176585999f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/6d4484cd4bbddc28541bebd546dba60bc9331767",
-                "reference": "6d4484cd4bbddc28541bebd546dba60bc9331767",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/2a9e82faffef4b575f44062917582e176585999f",
+                "reference": "2a9e82faffef4b575f44062917582e176585999f",
                 "shasum": ""
             },
             "require": {
@@ -716,7 +716,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2019-03-10T10:14:34+00:00"
+            "time": "2019-03-10T17:10:06+00:00"
         },
         {
             "name": "symfony/dependency-injection",
@@ -4242,12 +4242,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "484fe29ddaf5db735896280b68528c9fd2b05863"
+                "reference": "e4644b4a8fd393c346f1137305fb2f76a7dc20a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/484fe29ddaf5db735896280b68528c9fd2b05863",
-                "reference": "484fe29ddaf5db735896280b68528c9fd2b05863",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e4644b4a8fd393c346f1137305fb2f76a7dc20a7",
+                "reference": "e4644b4a8fd393c346f1137305fb2f76a7dc20a7",
                 "shasum": ""
             },
             "require": {
@@ -4307,7 +4307,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2019-03-10T15:10:16+00:00"
+            "time": "2019-03-10T16:25:30+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

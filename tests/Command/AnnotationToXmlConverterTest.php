@@ -75,6 +75,9 @@ class AnnotationToXmlConverterTest extends KernelTestCase
 
     public function testCommandWithoutPermissionOutputArgument(): void
     {
+        chmod(self::$kernel->getProjectDir().'/../../Fixtures/forbidenDir', 0555);
+        chmod(self::$kernel->getProjectDir().'/../../Fixtures/forbidenDir/Book.xml', 0444);
+
         self::$commandTester->execute([
             'command' => self::$command->getName(),
             'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',

@@ -64,11 +64,7 @@ class XmlTransformer implements ConfigurationConverterInterface
     private $filterServicesDefinition = [];
     private $encodedFilterServicesDefinition;
 
-    private $resource = [
-        '@xmlns' => 'https://api-platform.com/schema/metadata',
-        '@xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-        '@xsi:schemaLocation' => 'https://api-platform.com/schema/metadata https://api-platform.com/schema/metadata/metadata-2.0.xsd',
-    ];
+    private $resource = [];
 
     public function __construct(
         ResourceMetadataFactoryInterface $annotationResourceMetadataFactory,
@@ -97,21 +93,25 @@ class XmlTransformer implements ConfigurationConverterInterface
 
         $serializer = new Serializer([new ObjectNormalizer()], [new XmlEncoder(), new YamlEncoder()]);
 
-        $this->encodedFilterServicesDefinition = $serializer->encode(
-            [
-                '@xmlns' => 'http://symfony.com/schema/dic/services',
-                '@xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-                '@xsi:schemaLocation' => 'http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd',
-                'services' => ['service' => array_values($this->filterServicesDefinition)],
-            ],
-            'xml',
-            [
-                XmlEncoder::ROOT_NODE_NAME => 'container',
-                XmlEncoder::REMOVE_EMPTY_TAGS => true,
-                XmlEncoder::AS_COLLECTION => true,
-                XmlEncoder::FORMAT_OUTPUT => true,
-            ]
-        );
+        $services = array_values($this->filterServicesDefinition);
+
+        if (!empty($services)) {
+            $this->encodedFilterServicesDefinition = $serializer->encode(
+                [
+                    '@xmlns' => 'http://symfony.com/schema/dic/services',
+                    '@xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+                    '@xsi:schemaLocation' => 'http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd',
+                    'services' => ['service' => $services],
+                ],
+                'xml',
+                [
+                    XmlEncoder::ROOT_NODE_NAME => 'container',
+                    XmlEncoder::REMOVE_EMPTY_TAGS => true,
+                    XmlEncoder::AS_COLLECTION => true,
+                    XmlEncoder::FORMAT_OUTPUT => true,
+                ]
+            );
+        }
 
         return (string) $serializer->encode(
             [
@@ -130,7 +130,7 @@ class XmlTransformer implements ConfigurationConverterInterface
         );
     }
 
-    public function getFiltersServiceDefinition(): string
+    public function getFiltersServiceDefinition(): ?string
     {
         return $this->encodedFilterServicesDefinition;
     }
@@ -153,7 +153,7 @@ class XmlTransformer implements ConfigurationConverterInterface
             $this->resource['@iri'] = $iri;
         }
 
-        $this->resource['attribute'] = $this->getNode('attribute', $resourceMetadata->getAttributes());
+        $this->resource['attribute'] = $this->getNode('attribute', $resourceMetadata->getAttributes())['attribute'];
         $this->resource['graphql'] = $this->getNode('operation', $resourceMetadata->getGraphql());
         $this->resource['itemOperations'] = $this->getNode('itemOperation', $resourceMetadata->getItemOperations());
         $this->resource['collectionOperations'] = $this->getNode('collectionOperation', $resourceMetadata->getCollectionOperations());
@@ -187,28 +187,28 @@ class XmlTransformer implements ConfigurationConverterInterface
             $property['@iri'] = $iri;
         }
 
-        if ((null !== $readable = $propertyMetadata->isReadable()) && false !== $readable) {
-            $property['@readable'] = $readable;
+        if ((null !== $readable = $propertyMetadata->isReadable())) {
+            $property['@readable'] = $readable ? 'true' : 'false';
         }
 
-        if ((null !== $writable = $propertyMetadata->isWritable()) && false !== $writable) {
-            $property['@writable'] = $writable;
+        if ((null !== $writable = $propertyMetadata->isWritable())) {
+            $property['@writable'] = $writable ? 'true' : 'false';
         }
 
-        if ((null !== $readableLink = $propertyMetadata->isReadableLink()) && false !== $readableLink) {
-            $property['@readableLink'] = $readableLink;
+        if ((null !== $readableLink = $propertyMetadata->isReadableLink())) {
+            $property['@readableLink'] = $readableLink ? 'true' : 'false';
         }
 
-        if ((null !== $writableLink = $propertyMetadata->isWritableLink()) && false !== $writableLink) {
-            $property['@writableLink'] = $writableLink;
+        if ((null !== $writableLink = $propertyMetadata->isWritableLink())) {
+            $property['@writableLink'] = $writableLink ? 'true' : 'false';
         }
 
-        if ((null !== $required = $propertyMetadata->isRequired()) && false !== $required) {
-            $property['@required'] = $required;
+        if ((null !== $required = $propertyMetadata->isRequired())) {
+            $property['@required'] = $required ? 'true' : 'false';
         }
 
-        if ((null !== $identifier = $propertyMetadata->isIdentifier()) && false !== $identifier) {
-            $property['@identifier'] = $identifier;
+        if ((null !== $identifier = $propertyMetadata->isIdentifier())) {
+            $property['@identifier'] = $identifier ? 'true' : 'false';
         }
 
         if (null !== $attribute = $this->getNode('attribute', $propertyMetadata->getAttributes())) {
@@ -258,7 +258,7 @@ class XmlTransformer implements ConfigurationConverterInterface
                 $operationName = $operation;
             }
 
-            if ('get' !== $operationName && (!$isCustomOperation || Request::METHOD_GET !== $operation['method'])) {
+            if ('get' !== $operationName || !$isCustomOperation || Request::METHOD_GET !== ($operation['method'] ?? null)) {
                 continue;
             }
 
@@ -340,19 +340,24 @@ class XmlTransformer implements ConfigurationConverterInterface
         });
     }
 
-    private function getNode(string $node, ?array $itemOperations): ?array
+    private function getNode(string $node, ?array $data): ?array
     {
-        if (empty($itemOperations)) {
+        if (empty($data)) {
             return null;
         }
 
         $operations[$node] = [];
 
-        foreach ($itemOperations as $name => $attributes) {
-            $operations[$node][] = [
-                '@name' => is_iterable($attributes) ? $name : $attributes,
-                'attribute' => is_iterable($attributes) ? $this->getAttributes($attributes) : null,
-            ];
+        foreach ($data as $key => $value) {
+            $entry = ['@name' => \is_string($key) ? $key : $value];
+
+            if (is_iterable($value)) {
+                $entry['attribute'] = $this->getAttributes($value);
+            } elseif ($entry['@name'] !== $value) {
+                $entry['#'] = \is_bool($value) ? ($value ? 'true' : 'false') : $value;
+            }
+
+            $operations[$node][] = $entry;
         }
 
         return $operations;
