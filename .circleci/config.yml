@@ -56,7 +56,7 @@ jobs:
       - image: circleci/php:7.2-node-browsers
     environment:
       PHP_CS_FIXER_FUTURE_MODE: 1
-    working_directory: ~/gheb/api-platform-config-converter-bundle
+    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
     steps:
       - checkout
       - *restore-composer-cache
@@ -80,7 +80,7 @@ jobs:
   phpstan:
     docker:
       - image: circleci/php:7.2-node-browsers
-    working_directory: ~/gheb/api-platform-config-converter-bundle
+    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
     steps:
       - checkout
       - *restore-composer-cache
