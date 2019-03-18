@@ -98,3 +98,10 @@ jobs:
         command: |-
           export PATH="$PATH:$HOME/.composer/vendor/bin"
           phpstan analyse -c phpstan.neon -l7 --ansi src tests
+
+workflows:
+  version: 2
+  lint:
+    jobs:
+      - php-cs-fixer
+      - phpstan
