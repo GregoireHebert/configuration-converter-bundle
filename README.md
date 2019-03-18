@@ -11,9 +11,9 @@ Note: Always double check you new configuration for edge cases that might not be
 
 ### Todo
 
-[] Loop through every already available ApiResource
-[] Add YAML support
-[] Add Annotation support
+- [ ] Loop through every already available ApiResource
+- [ ] Add YAML support
+- [ ] Add Annotation support
 
 ### Installation
 
