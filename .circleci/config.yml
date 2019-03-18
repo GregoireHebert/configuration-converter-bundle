@@ -65,15 +65,15 @@ jobs:
       - *disable-php-memory-limit
       - *update-composer
       - run:
-        name: Install PHP-CS-Fixer
-        command: composer global require friendsofphp/php-cs-fixer:^2.15
+          name: Install PHP-CS-Fixer
+          command: composer global require friendsofphp/php-cs-fixer:^2.15
       - *save-composer-cache-by-revision
       - *save-composer-cache-by-branch
       - run:
-        name: Run PHP-CS-Fixer
-        command: |
-          export PATH="$PATH:$HOME/.composer/vendor/bin"
-          php-cs-fixer fix --dry-run --diff --ansi
+          name: Run PHP-CS-Fixer
+          command: |
+            export PATH="$PATH:$HOME/.composer/vendor/bin"
+            php-cs-fixer fix --dry-run --diff --ansi
       - *save-php-cs-fixer-cache-by-revision
       - *save-php-cs-fixer-cache-by-branch
 
