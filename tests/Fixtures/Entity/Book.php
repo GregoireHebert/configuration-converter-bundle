@@ -15,15 +15,16 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * ...
- *
  * @ApiResource(
+ *     shortName="customShortname",
+ *     description="my description",
+ *     iri="http://schema.org/Book",
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}},
  *     itemOperations={
  *         "get"={"method"="GET", "path"="/grimoire/{id}", "requirements"={"id"="\d+"}, "defaults"={"color"="brown"}, "options"={"my_option"="my_option_value"}, "schemes"={"https"}, "host"="{subdomain}.api-platform.com"},
  *         "put"={"method"="PUT", "path"="/grimoire/{id}/update", "hydra_context"={"foo"="bar"}},
- *         "post_publication"={"method"="GET", "path"="/grimoire", "deprecation_reason"="Retrieve a Book instead", "sunset"="01/01/2020"}
+ *         "post_publication"={"method"="POST", "path"="/grimoire", "deprecation_reason"="Retrieve a Book instead", "sunset"="01/01/2020"}
  *     },
  *     collectionOperations={
  *         "get",
@@ -50,11 +51,11 @@ class Book
     /**
      * @var string identifiant unique
      * @ApiProperty(
-     *     readable=false,
-     *     writable=false,
-     *     readableLink=null,
-     *     writableLink=null,
-     *     required=false,
+     *     readable=true,
+     *     writable=true,
+     *     readableLink=true,
+     *     writableLink=true,
+     *     required=true,
      *     iri="http://schema.org/id",
      *     identifier=true
      * )
@@ -69,7 +70,7 @@ class Book
      * @Groups({"read", "mutation"})
      *
      * @var Dummy
-     * @ApiSubresource
+     * @ApiSubresource(maxDepth=1)
      */
     public $author;
 

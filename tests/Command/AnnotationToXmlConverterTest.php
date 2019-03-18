@@ -47,6 +47,12 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         );
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
+
+        self::$commandTester->execute(
+            ['command' => self::$command->getName(), 'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Dummy']
+        );
+        $output = self::$commandTester->getDisplay();
+        $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
     }
 
     public function testCommandWithBadFormatArgument(): void

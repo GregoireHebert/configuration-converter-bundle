@@ -242,15 +242,7 @@ class XmlTransformer implements ConfigurationConverterInterface
     {
         $resourceMetadata = $this->resourceFilterMetadataFactory->create($resourceClass);
         $shortName = $resourceMetadata->getShortName();
-        $collectionOperations = $resourceMetadata->getCollectionOperations();
-
-        // It seems that the ApiFilter annotation has been used, set the filter for every collection get operation.
-        if (null === $collectionOperations) {
-            $resourceFilters = $resourceMetadata->getAttribute('filters');
-            $this->transformOperationFilter($resourceFilters, 'get', $shortName);
-
-            return;
-        }
+        $collectionOperations = $resourceMetadata->getCollectionOperations() ?? [];
 
         // Specify the filters accordingly to the collection operations definitions.
         foreach ($collectionOperations as $operationName => $operation) {
@@ -258,13 +250,18 @@ class XmlTransformer implements ConfigurationConverterInterface
                 $operationName = $operation;
             }
 
-            if ('get' !== $operationName || !$isCustomOperation || Request::METHOD_GET !== ($operation['method'] ?? null)) {
+            if ('get' !== $operationName && $isCustomOperation && Request::METHOD_GET !== ($operation['method'] ?? null)) {
                 continue;
             }
 
-            $resourceFilters = $resourceMetadata->getCollectionOperationAttribute($operationName, 'filters', [], true);
+            $resourceFilters = $operation['attributes']['filters'] ?? null;
+
             $this->transformOperationFilter($resourceFilters, $operationName, $shortName);
         }
+
+        // Specify the filter when defined with the @ApiFilter Annotation
+        $resourceFilters = $resourceMetadata->getAttribute('filters');
+        $this->transformOperationFilter($resourceFilters, 'get', $shortName);
     }
 
     private function transformOperationFilter(?array $resourceFilters, string $operationName, string $resourceShortName): void
