@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     itemOperations={
  *         "get"={"method"="GET", "path"="/grimoire/{id}", "requirements"={"id"="\d+"}, "defaults"={"color"="brown"}, "options"={"my_option"="my_option_value"}, "schemes"={"https"}, "host"="{subdomain}.api-platform.com"},
  *         "put"={"method"="PUT", "path"="/grimoire/{id}/update", "hydra_context"={"foo"="bar"}},
- *         "post_publication"={"method"="POST", "path"="/grimoire", "deprecation_reason"="Retrieve a Book instead", "sunset"="01/01/2020"}
+ *         "post_publication"={"method"="PUT", "path"="/grimoire", "deprecation_reason"="Retrieve a Book instead", "sunset"="01/01/2020"}
  *     },
  *     collectionOperations={
  *         "get",

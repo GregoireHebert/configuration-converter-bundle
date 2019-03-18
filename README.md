@@ -11,9 +11,9 @@ Note: Always double check you new configuration for edge cases that might not be
 
 ### Todo
 
-[] Loop through every already available ApiResource
-[] Add YAML support
-[] Add Annotation support
+- [ ] Loop through every already available ApiResource
+- [ ] Add YAML support
+- [ ] Add Annotation support
 
 ### Installation
 
@@ -70,5 +70,5 @@ $ vendor/bin/phpunit
 with coverage
 
 ```shell
-$ vendor/bin/phpunit --coverage-html dist
+$ phpdbg -qrr vendor/bin/phpunit --coverage-html dist
 ```

@@ -1,0 +1,142 @@
+version: 2
+
+reusable-steps:
+  - &clear-test-app-cache
+    run:
+      name: Clear test app cache
+      command: tests/Fixtures/App/console cache:clear
+  - &restore-composer-cache
+    restore_cache:
+      keys:
+        - composer-cache-{{ .Revision }}
+        - composer-cache-{{ .Branch }}
+        - composer-cache
+  - &restore-php-cs-fixer-cache
+    restore_cache:
+      keys:
+        - php-cs-fixer-cache-{{ .Revision }}
+        - php-cs-fixer-cache-{{ .Branch }}
+        - php-cs-fixer-cache
+  - &disable-xdebug-php-extension
+    run:
+      name: Disable Xdebug PHP extension
+      command: sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+  - &disable-php-memory-limit
+    run:
+      name: Disable PHP memory limit
+      command: echo 'memory_limit=-1' | sudo tee -a /usr/local/etc/php/php.ini
+  - &update-composer
+    run:
+      name: Update Composer
+      command: sudo composer self-update
+  - &save-composer-cache-by-revision
+    save_cache:
+      paths:
+        - ~/.composer/cache
+      key: composer-cache-{{ .Revision }}-{{ .BuildNum }}
+  - &save-composer-cache-by-branch
+    save_cache:
+      paths:
+        - ~/.composer/cache
+      key: composer-cache-{{ .Branch }}-{{ .BuildNum }}
+  - &save-php-cs-fixer-cache-by-branch
+    save_cache:
+      paths:
+        - .php_cs.cache
+      key: php-cs-fixer-cache-{{ .Branch }}-{{ .BuildNum }}
+  - &save-php-cs-fixer-cache-by-revision
+    save_cache:
+      paths:
+        - .php_cs.cache
+      key: php-cs-fixer-cache-{{ .Revision }}-{{ .BuildNum }}
+  - &update-project-dependencies
+    run:
+      name: Update project dependencies
+      command: composer update --prefer-dist --no-progress --no-suggest --ansi
+
+jobs:
+  php-cs-fixer:
+    docker:
+      - image: circleci/php:7.2-node-browsers
+    environment:
+      PHP_CS_FIXER_FUTURE_MODE: 1
+    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
+    steps:
+      - checkout
+      - *restore-composer-cache
+      - *restore-php-cs-fixer-cache
+      - *disable-xdebug-php-extension
+      - *disable-php-memory-limit
+      - *update-composer
+      - run:
+          name: Install PHP-CS-Fixer
+          command: composer global require friendsofphp/php-cs-fixer:^2.15@dev
+      - *save-composer-cache-by-revision
+      - *save-composer-cache-by-branch
+      - run:
+          name: Run PHP-CS-Fixer
+          command: |
+            export PATH="$PATH:$HOME/.composer/vendor/bin"
+            php-cs-fixer fix --dry-run --diff --ansi
+      - *save-php-cs-fixer-cache-by-revision
+      - *save-php-cs-fixer-cache-by-branch
+
+  phpstan:
+    docker:
+      - image: circleci/php:7.2-node-browsers
+    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
+    steps:
+      - checkout
+      - *restore-composer-cache
+      - *disable-xdebug-php-extension
+      - *disable-php-memory-limit
+      - *update-composer
+      - *update-project-dependencies
+      - *save-composer-cache-by-revision
+      - *save-composer-cache-by-branch
+      - run:
+          name: Run PHPStan
+          command: vendor/bin/phpstan analyse -l7 --ansi src tests
+
+  phpunit-coverage:
+    docker:
+      - image: circleci/php:7.2-node-browsers
+    environment:
+      SYMFONY_DEPRECATIONS_HELPER: weak_vendors
+    parallelism: 2
+    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
+    steps:
+      - checkout
+      - *restore-composer-cache
+      - *disable-xdebug-php-extension
+      - *disable-php-memory-limit
+      - *update-composer
+      - *update-project-dependencies
+      - *save-composer-cache-by-revision
+      - *save-composer-cache-by-branch
+      - *clear-test-app-cache
+      - run:
+          name: Run PHPUnit tests
+          command: phpdbg -qrr vendor/bin/phpunit --coverage-php build/cov/coverage.cov --log-junit build/logs/junit.xml --colors=always
+      - store_test_results:
+          path: build/logs
+      - store_artifacts:
+          path: build/logs/phpunit/junit.xml
+          destination: build/logs/phpunit/junit.xml
+      - store_artifacts:
+          path: build/logs/parallel/jobs.log
+          destination: build/logs/parallel/jobs.log
+      - persist_to_workspace:
+          root: build
+          paths:
+            - cov
+
+workflows:
+  version: 2
+  lint:
+    jobs:
+      - php-cs-fixer
+      - phpstan
+  test-with-coverage:
+    jobs:
+      - phpunit-coverage
