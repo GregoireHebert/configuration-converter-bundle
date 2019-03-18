@@ -4,15 +4,15 @@ reusable-steps:
   - &restore-composer-cache
     restore_cache:
       keys:
-      - composer-cache-{{ .Revision }}
-      - composer-cache-{{ .Branch }}
-    - composer-cache
+        - composer-cache-{{ .Revision }}
+        - composer-cache-{{ .Branch }}
+        - composer-cache
   - &restore-php-cs-fixer-cache
     restore_cache:
       keys:
-      - php-cs-fixer-cache-{{ .Revision }}
-      - php-cs-fixer-cache-{{ .Branch }}
-      - php-cs-fixer-cache
+        - php-cs-fixer-cache-{{ .Revision }}
+        - php-cs-fixer-cache-{{ .Branch }}
+        - php-cs-fixer-cache
   - &disable-xdebug-php-extension
     run:
       name: Disable Xdebug PHP extension
@@ -28,22 +28,22 @@ reusable-steps:
   - &save-composer-cache-by-revision
     save_cache:
       paths:
-      - ~/.composer/cache
+        - ~/.composer/cache
       key: composer-cache-{{ .Revision }}-{{ .BuildNum }}
   - &save-composer-cache-by-branch
     save_cache:
       paths:
-      - ~/.composer/cache
+        - ~/.composer/cache
       key: composer-cache-{{ .Branch }}-{{ .BuildNum }}
   - &save-php-cs-fixer-cache-by-branch
     save_cache:
       paths:
-      - .php_cs.cache
+        - .php_cs.cache
       key: php-cs-fixer-cache-{{ .Branch }}-{{ .BuildNum }}
   - &save-php-cs-fixer-cache-by-revision
     save_cache:
       paths:
-      - .php_cs.cache
+        - .php_cs.cache
       key: php-cs-fixer-cache-{{ .Revision }}-{{ .BuildNum }}
   - &update-project-dependencies
     run:
@@ -53,47 +53,47 @@ reusable-steps:
 jobs:
   php-cs-fixer:
     docker:
-    - image: circleci/php:7.2-node-browsers
+      - image: circleci/php:7.2-node-browsers
     environment:
       PHP_CS_FIXER_FUTURE_MODE: 1
     working_directory: ~/gheb/api-platform-config-converter-bundle
     steps:
-    - checkout
-    - *restore-composer-cache
-    - *restore-php-cs-fixer-cache
-    - *disable-xdebug-php-extension
-    - *disable-php-memory-limit
-    - *update-composer
-    - run:
+      - checkout
+      - *restore-composer-cache
+      - *restore-php-cs-fixer-cache
+      - *disable-xdebug-php-extension
+      - *disable-php-memory-limit
+      - *update-composer
+      - run:
         name: Install PHP-CS-Fixer
         command: composer global require friendsofphp/php-cs-fixer:^2.15
-    - *save-composer-cache-by-revision
-    - *save-composer-cache-by-branch
-    - run:
+      - *save-composer-cache-by-revision
+      - *save-composer-cache-by-branch
+      - run:
         name: Run PHP-CS-Fixer
         command: |-
           export PATH="$PATH:$HOME/.composer/vendor/bin"
           php-cs-fixer fix --dry-run --diff --ansi
-    - *save-php-cs-fixer-cache-by-revision
-    - *save-php-cs-fixer-cache-by-branch
+      - *save-php-cs-fixer-cache-by-revision
+      - *save-php-cs-fixer-cache-by-branch
 
   phpstan:
     docker:
-    - image: circleci/php:7.2-node-browsers
+      - image: circleci/php:7.2-node-browsers
     working_directory: ~/gheb/api-platform-config-converter-bundle
     steps:
-    - checkout
-    - *restore-composer-cache
-    - *disable-xdebug-php-extension
-    - *disable-php-memory-limit
-    - *update-composer
-    - *update-project-dependencies
-    - run:
+      - checkout
+      - *restore-composer-cache
+      - *disable-xdebug-php-extension
+      - *disable-php-memory-limit
+      - *update-composer
+      - *update-project-dependencies
+      - run:
         name: Install PHPStan
         command: composer global require phpstan/phpstan:0.11.0
-    - *save-composer-cache-by-revision
-    - *save-composer-cache-by-branch
-    - run:
+      - *save-composer-cache-by-revision
+      - *save-composer-cache-by-branch
+      - run:
         name: Run PHPStan
         command: |-
           export PATH="$PATH:$HOME/.composer/vendor/bin"
