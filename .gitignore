@@ -4,3 +4,4 @@
 /tests/Fixtures/App/cache/*
 /tests/Fixtures/App/logs/*
 /dist/
+composer.lock
