@@ -1,6 +1,10 @@
 version: 2
 
 reusable-steps:
+  - &clear-test-app-cache
+    run:
+      name: Clear test app cache
+      command: tests/Fixtures/App/console cache:clear
   - &restore-composer-cache
     restore_cache:
       keys:
@@ -94,9 +98,81 @@ jobs:
           name: Run PHPStan
           command: vendor/bin/phpstan analyse -l7 --ansi src tests
 
+  phpunit-coverage:
+    docker:
+      - image: circleci/php:7.2-node-browsers
+    environment:
+      SYMFONY_DEPRECATIONS_HELPER: weak_vendors
+    parallelism: 2
+    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
+    steps:
+      - checkout
+      - *restore-composer-cache
+      - *disable-xdebug-php-extension
+      - *disable-php-memory-limit
+      - *update-composer
+      - *update-project-dependencies
+      - *save-composer-cache-by-revision
+      - *save-composer-cache-by-branch
+      - *clear-test-app-cache
+      - run:
+          name: Run PHPUnit tests
+          command: phpdbg -qrr vendor/bin/phpunit --coverage-php build/cov/coverage.cov --log-junit build/logs/junit.xml --colors=always
+      - store_test_results:
+          path: build/logs
+      - store_artifacts:
+          path: build/logs/phpunit/junit.xml
+          destination: build/logs/phpunit/junit.xml
+      - store_artifacts:
+          path: build/logs/parallel/jobs.log
+          destination: build/logs/parallel/jobs.log
+      - persist_to_workspace:
+          root: build
+          paths:
+            - cov
+
+#  upload-coverage:
+#    docker:
+#      - image: circleci/php:7.2-node-browsers
+#    working_directory: ~/api-platform/core
+#    steps:
+#      - checkout
+#      - *disable-xdebug-php-extension
+#      - *disable-php-memory-limit
+#      - run:
+#          name: Download phpcov
+#          command: wget https://phar.phpunit.de/phpcov.phar
+#      - attach_workspace:
+#          at: build
+#      - run:
+#          name: Merge code coverage reports
+#          command: |
+#            mkdir -p build/logs
+#            phpdbg -qrr phpcov.phar merge --clover build/logs/clover.xml build/cov
+#      - store_artifacts:
+#          path: build/logs/clover.xml
+#          destination: build/logs/clover.xml
+#      - run:
+#          name: Upload code coverage report to Coveralls
+#          command: |
+#            if [ ! -z "$COVERALLS_REPO_TOKEN" ]; then
+#              npx @cedx/coveralls build/logs/clover.xml
+#            else
+#              echo 'Skipped'
+#            fi
+#      - run:
+#          name: Upload code coverage report to Codecov
+#          command: npx codecov --file=build/logs/clover.xml --disable=gcov
+
 workflows:
   version: 2
   lint:
     jobs:
       - php-cs-fixer
       - phpstan
+  test-with-coverage:
+    jobs:
+      - phpunit-coverage
+#      - upload-coverage:
+#          requires:
+#            - phpunit-coverage
