@@ -39,7 +39,8 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         );
 
         $output = self::$commandTester->getDisplay();
-        $this->assertStringContainsString('[NOTE] Converting resource: ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book', $output);
+        $this->assertStringContainsString('[NOTE] Converting resource:', $output);
+        $this->assertStringContainsString('ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book', $output);
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
 
         self::$commandTester->execute(
@@ -112,6 +113,6 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         ]);
 
         $output = self::$commandTester->getDisplay();
-        $this->assertStringContainsString('[OK] Check your configuration in the /tmp directory, and don\'t forget to configure API Platform to use it', $output);
+        $this->assertStringContainsString('[OK] Check your configuration in the /tmp directory', $output);
     }
 }
