@@ -70,5 +70,5 @@ $ vendor/bin/phpunit
 with coverage
 
 ```shell
-$ vendor/bin/phpunit --coverage-html dist
+$ phpdbg -qrr vendor/bin/phpunit --coverage-html dist
 ```
