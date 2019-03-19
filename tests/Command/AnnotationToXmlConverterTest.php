@@ -7,6 +7,7 @@ namespace ApiPlatform\ConfigurationConverter\Test\Command;
 use ApiPlatform\ConfigurationConverter\Command\ConverterCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Config\Util\XmlUtils;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class AnnotationToXmlConverterTest extends KernelTestCase
@@ -82,13 +83,13 @@ class AnnotationToXmlConverterTest extends KernelTestCase
 
     public function testCommandWithoutPermissionOutputArgument(): void
     {
-        chmod(self::$kernel->getProjectDir().'/../../Fixtures/forbidenDir', 0555);
-        chmod(self::$kernel->getProjectDir().'/../../Fixtures/forbidenDir/Book.xml', 0444);
+        chmod(self::$kernel->getProjectDir().'/../forbidenDir', 0555);
+        chmod(self::$kernel->getProjectDir().'/../forbidenDir/Book.xml', 0444);
 
         self::$commandTester->execute([
             'command' => self::$command->getName(),
             'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
-            '--output' => self::$kernel->getProjectDir().'/../../Fixtures/forbidenDir',
+            '--output' => self::$kernel->getProjectDir().'/../forbidenDir',
         ]);
 
         $output = self::$commandTester->getDisplay();
@@ -97,22 +98,31 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         self::$commandTester->execute([
             'command' => self::$command->getName(),
             'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
-            '--output' => self::$kernel->getProjectDir().'/../../Fixtures/forbidenDir/cannotcreatedir',
+            '--output' => self::$kernel->getProjectDir().'/../forbidenDir/cannotcreatedir',
         ]);
 
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('Permission denied', $output);
     }
 
-    public function testCommandWithTmpOutputArgument(): void
+    public function testXmlResourceOutput(): void
     {
-        self::$commandTester->execute([
-            'command' => self::$command->getName(),
-            'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
-            '--output' => '/tmp',
-        ]);
+        foreach (['Book', 'Tag', 'Dummy'] as $entityName) {
+            self::$commandTester->execute([
+                'command' => self::$command->getName(),
+                'resource' => "ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\\$entityName",
+                '--output' => self::$kernel->getProjectDir() . '/config/packages/api-platform/',
+            ]);
+        }
 
-        $output = self::$commandTester->getDisplay();
-        $this->assertStringContainsString('[OK] Check your configuration in the /tmp directory', $output);
+        $fixtures = self::$kernel->getProjectDir().'/config/packages/api-platform/';
+        $resourceSchema =  self::$kernel->getProjectDir().'/../../../vendor/api-platform/core/src/Metadata/schema/metadata.xsd';
+        $servicesSchema =  self::$kernel->getProjectDir().'/../../../vendor/symfony/dependency-injection/Loader/schema/dic/services/services-1.0.xsd';
+
+        $this->assertInstanceOf(\DOMDocument::class, XmlUtils::loadFile($fixtures.'Book.xml', $resourceSchema));
+        $this->assertInstanceOf(\DOMDocument::class, XmlUtils::loadFile($fixtures.'Book.services.xml', $servicesSchema));
+        $this->assertInstanceOf(\DOMDocument::class, XmlUtils::loadFile($fixtures.'Tag.xml', $resourceSchema));
+        $this->assertInstanceOf(\DOMDocument::class, XmlUtils::loadFile($fixtures.'Tag.services.xml', $servicesSchema));
+        $this->assertInstanceOf(\DOMDocument::class, XmlUtils::loadFile($fixtures.'Dummy.xml', $resourceSchema));
     }
 }
