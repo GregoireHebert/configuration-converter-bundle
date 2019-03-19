@@ -131,6 +131,36 @@ jobs:
           paths:
             - cov
 
+  merge-and-upload-coverage:
+    docker:
+    - image: circleci/php:7.2-node-browsers
+    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
+    steps:
+    - checkout
+    - *disable-xdebug-php-extension
+    - *disable-php-memory-limit
+    - run:
+        name: Download phpcov
+        command: wget https://phar.phpunit.de/phpcov.phar
+    - attach_workspace:
+        at: build
+    - run:
+        name: Merge code coverage reports
+        command: |
+          mkdir -p build/logs
+          phpdbg -qrr phpcov.phar merge --clover build/logs/clover.xml build/cov
+    - store_artifacts:
+        path: build/logs/clover.xml
+        destination: build/logs/clover.xml
+    - run:
+        name: Upload code coverage report to Coveralls
+        command: |
+          if [ ! -z "$COVERALLS_REPO_TOKEN" ]; then
+            npx @cedx/coveralls build/logs/clover.xml
+          else
+            echo 'Skipped'
+          fi
+
 workflows:
   version: 2
   lint:
@@ -140,3 +170,6 @@ workflows:
   test-with-coverage:
     jobs:
       - phpunit-coverage
+      - merge-and-upload-coverage:
+          requires:
+            - phpunit-coverage
