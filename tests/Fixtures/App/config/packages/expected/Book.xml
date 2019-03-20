@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<resources xmlns="https://api-platform.com/schema/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://api-platform.com/schema/metadata https://api-platform.com/schema/metadata/metadata-2.0.xsd">
+  <resource class="ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book" shortName="customShortname" description="my description" iri="http://schema.org/Book">
+    <attribute name="normalization_context">
+      <attribute name="groups">
+        <attribute>read</attribute>
+      </attribute>
+    </attribute>
+    <attribute name="denormalization_context">
+      <attribute name="groups">
+        <attribute>write</attribute>
+      </attribute>
+    </attribute>
+    <attribute name="deprecation_reason">Create a Book instead</attribute>
+    <graphql>
+      <operation name="query">
+        <attribute name="normalization_context">
+          <attribute name="groups">
+            <attribute>query</attribute>
+          </attribute>
+        </attribute>
+      </operation>
+      <operation name="create">
+        <attribute name="normalization_context">
+          <attribute name="groups">
+            <attribute>query</attribute>
+          </attribute>
+        </attribute>
+        <attribute name="denormalization_context">
+          <attribute name="groups">
+            <attribute>mutation</attribute>
+          </attribute>
+        </attribute>
+      </operation>
+      <operation name="delete"/>
+    </graphql>
+    <itemOperations>
+      <itemOperation name="get">
+        <attribute name="method">GET</attribute>
+        <attribute name="path">/grimoire/{id}</attribute>
+        <attribute name="requirements">
+          <attribute name="id">\d+</attribute>
+        </attribute>
+        <attribute name="defaults">
+          <attribute name="color">brown</attribute>
+        </attribute>
+        <attribute name="options">
+          <attribute name="my_option">my_option_value</attribute>
+        </attribute>
+        <attribute name="schemes">
+          <attribute>https</attribute>
+        </attribute>
+        <attribute name="host">{subdomain}.api-platform.com</attribute>
+      </itemOperation>
+      <itemOperation name="put">
+        <attribute name="method">PUT</attribute>
+        <attribute name="path">/grimoire/{id}/update</attribute>
+        <attribute name="hydra_context">
+          <attribute name="foo">bar</attribute>
+        </attribute>
+      </itemOperation>
+      <itemOperation name="post_publication">
+        <attribute name="method">PUT</attribute>
+        <attribute name="path">/grimoire</attribute>
+        <attribute name="deprecation_reason">Retrieve a Book instead</attribute>
+        <attribute name="sunset">01/01/2020</attribute>
+      </itemOperation>
+    </itemOperations>
+    <collectionOperations>
+      <collectionOperation name="get">
+        <attribute name="filters">
+          <attribute>customShortname.GroupFilter</attribute>
+          <attribute>customShortname.PropertyFilter</attribute>
+          <attribute>customShortname.SearchFilter</attribute>
+          <attribute>customShortname.OrderFilter</attribute>
+        </attribute>
+      </collectionOperation>
+      <collectionOperation name="custom">
+        <attribute name="method">GET</attribute>
+        <attribute name="path">/MyRoute</attribute>
+      </collectionOperation>
+      <collectionOperation name="post"/>
+    </collectionOperations>
+    <property name="id" description="identifiant unique" iri="http://schema.org/id" readable="true" writable="true" readableLink="true" writableLink="true" required="true" identifier="true"/>
+    <property name="name" readable="true" writable="true" required="false"/>
+    <property name="author" readable="true" writable="false" readableLink="false" writableLink="false" required="false">
+      <subresource resourceClass="ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Dummy" maxDepth="1"/>
+    </property>
+    <property name="scribus" readable="false" writable="false" required="false">
+      <attribute>
+        <attribute name="deprecation_reason">Use the author property instead</attribute>
+      </attribute>
+    </property>
+  </resource>
+</resources>
