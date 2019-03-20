@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+  <services>
+    <service id="customShortname.GroupFilter" autowire="false" autoconfigure="false" public="false" parent="api_platform.serializer.group_filter">
+      <argument key="$overrideDefaultGroups">false</argument>
+      <argument key="$parameterName">groups</argument>
+      <argument key="$whitelist">
+        <argument>allowed_group</argument>
+      </argument>
+      <tag name="api_platform.filter"/>
+    </service>
+    <service id="customShortname.PropertyFilter" autowire="false" autoconfigure="false" public="false" parent="api_platform.serializer.property_filter">
+      <argument key="$overrideDefaultProperties">false</argument>
+      <argument key="$parameterName">propertyfilterparametername</argument>
+      <argument key="$whitelist">
+        <argument>name</argument>
+        <argument>author</argument>
+      </argument>
+      <tag name="api_platform.filter"/>
+    </service>
+    <service id="customShortname.SearchFilter" autowire="false" autoconfigure="false" public="false" parent="api_platform.doctrine.orm.search_filter">
+      <argument key="id">exact</argument>
+      <argument key="price">exact</argument>
+      <argument key="description">partial</argument>
+      <tag name="api_platform.filter"/>
+    </service>
+    <service id="customShortname.OrderFilter" autowire="false" autoconfigure="false" public="false" parent="api_platform.doctrine.orm.order_filter">
+      <argument key="validFrom">
+        <argument key="nulls_comparison">nulls_smallest</argument>
+        <argument key="default_direction">DESC</argument>
+      </argument>
+      <tag name="api_platform.filter"/>
+    </service>
+  </services>
+</container>

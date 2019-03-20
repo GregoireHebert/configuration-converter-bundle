@@ -61,10 +61,10 @@ class XmlTransformer implements ConfigurationConverterInterface
     private $propertyMetadataFactory;
     private $propertyNameCollectionFactory;
     private $resourceFilterMetadataFactory;
-    private $filterServicesDefinition = [];
+    private $filterServicesDefinition;
     private $encodedFilterServicesDefinition;
 
-    private $resource = [];
+    private $resource;
 
     public function __construct(
         ResourceMetadataFactoryInterface $annotationResourceMetadataFactory,
@@ -85,8 +85,16 @@ class XmlTransformer implements ConfigurationConverterInterface
         return 'xml';
     }
 
+    private function init(): void
+    {
+        $this->filterServicesDefinition = [];
+        $this->resource = [];
+        $this->encodedFilterServicesDefinition = null;
+    }
+
     public function transform(string $resourceClass): string
     {
+        $this->init();
         $this->transformResource($resourceClass);
         $this->transformProperties($resourceClass);
         $this->transformFilters($resourceClass);
@@ -244,8 +252,16 @@ class XmlTransformer implements ConfigurationConverterInterface
         $shortName = $resourceMetadata->getShortName();
         $collectionOperations = $resourceMetadata->getCollectionOperations() ?? [];
 
+        // Specify the filter when defined with the @ApiFilter Annotation
+        $globalResourceFilters = $resourceMetadata->getAttribute('filters');
+        $isCustomOperation = null;
+
         // Specify the filters accordingly to the collection operations definitions.
         foreach ($collectionOperations as $operationName => $operation) {
+            if (null === $resourceFilters = $operation['attributes']['filters'] ?? null) {
+                continue;
+            }
+
             if (!$isCustomOperation = \is_array($operation)) {
                 $operationName = $operation;
             }
@@ -254,17 +270,16 @@ class XmlTransformer implements ConfigurationConverterInterface
                 continue;
             }
 
-            $resourceFilters = $operation['attributes']['filters'] ?? null;
-
-            $this->transformOperationFilter($resourceFilters, $operationName, $shortName);
+            $this->transformOperationFilter(array_merge($resourceFilters, $globalResourceFilters), $operationName, $shortName);
         }
 
-        // Specify the filter when defined with the @ApiFilter Annotation
-        $resourceFilters = $resourceMetadata->getAttribute('filters');
-        $this->transformOperationFilter($resourceFilters, 'get', $shortName);
+        // None defined through each collection operation, they've been defined by annotation only
+        if (null === $isCustomOperation && null !== $globalResourceFilters) {
+            $this->transformOperationFilter($globalResourceFilters, 'get', $shortName);
+        }
     }
 
-    private function transformOperationFilter(?array $resourceFilters, string $operationName, string $resourceShortName): void
+    private function transformOperationFilter(array $resourceFilters, string $operationName, string $resourceShortName): void
     {
         if (!isset($this->resource['collectionOperations']['collectionOperation'])) {
             $this->resource['collectionOperations']['collectionOperation'][] = [
@@ -274,14 +289,19 @@ class XmlTransformer implements ConfigurationConverterInterface
         }
 
         // Update the services
-        foreach ($resourceFilters ?? [] as $key => $filterId) {
+        foreach ($resourceFilters as $key => &$filterId) {
             if (null === $filter = $this->getFilter($filterId)) {
+                unset($resourceFilters[$key]);
                 continue;
             }
 
-            $shortName = (new \ReflectionClass($filter))->getShortName();
-            $serviceId = sprintf('%s.%s', $resourceShortName, $shortName);
-            $resourceFilters[$key] = $serviceId;
+            if (0 !== stripos($filterId, $resourceShortName)) {
+                $filterId = sprintf('%s.%s', $resourceShortName, (new \ReflectionClass($filter))->getShortName());
+            } else {
+                continue;
+            }
+
+            $resourceFilters[$key] = $filterId;
             $arguments = [];
 
             if ($filter instanceof AbstractFilter || $filter instanceof MongoDbOdmAbstractFilter) {
@@ -311,8 +331,8 @@ class XmlTransformer implements ConfigurationConverterInterface
                 $arguments = $closure($filter);
             }
 
-            $this->filterServicesDefinition[$serviceId] = [
-                '@id' => $serviceId,
+            $this->filterServicesDefinition[$filterId] = [
+                '@id' => $filterId,
                 '@autowire' => 'false',
                 '@autoconfigure' => 'false',
                 '@public' => 'false',
@@ -325,7 +345,7 @@ class XmlTransformer implements ConfigurationConverterInterface
         }
 
         // Update the collection operations
-        array_walk($this->resource['collectionOperations']['collectionOperation'], function (&$operation) use ($operationName, $resourceFilters): void {
+        foreach ($this->resource['collectionOperations']['collectionOperation'] as &$operation) {
             if ($operation['@name'] !== $operationName) {
                 return;
             }
@@ -334,7 +354,7 @@ class XmlTransformer implements ConfigurationConverterInterface
                 '@name' => 'filters',
                 'attribute' => $resourceFilters,
             ];
-        });
+        }
     }
 
     private function getNode(string $node, ?array $data): ?array
@@ -371,9 +391,14 @@ class XmlTransformer implements ConfigurationConverterInterface
 
             if (is_numeric($attribute)) {
                 $nodes[] = $value;
-            } else {
-                $nodes[] = ['@name' => $attribute, '#' => $value];
+                continue;
             }
+
+            if ('attributes' === $attribute) {
+                continue;
+            }
+
+            $nodes[] = ['@name' => $attribute, '#' => $value];
         }
 
         return $nodes;

@@ -3,6 +3,6 @@
 /tests/Fixtures/App/var/*
 /tests/Fixtures/App/cache/*
 /tests/Fixtures/App/logs/*
-/tests/Fixtures/App/config/packages
+/tests/Fixtures/App/config/packages/api-platform
 /dist/
 composer.lock

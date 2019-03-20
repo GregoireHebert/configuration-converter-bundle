@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<resources xmlns="https://api-platform.com/schema/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://api-platform.com/schema/metadata https://api-platform.com/schema/metadata/metadata-2.0.xsd">
+  <resource class="ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Tag">
+    <collectionOperations>
+      <collectionOperation name="get">
+        <attribute name="filters">
+          <attribute>tag.name_filter</attribute>
+          <attribute>Tag.OrderFilter</attribute>
+        </attribute>
+      </collectionOperation>
+      <collectionOperation name="post">
+        <attribute name="method">POST</attribute>
+      </collectionOperation>
+    </collectionOperations>
+    <property name="id" description="var string." readable="true" writable="true" required="false" identifier="true"/>
+    <property name="name" description="var string." readable="true" writable="true" required="false"/>
+  </resource>
+</resources>
