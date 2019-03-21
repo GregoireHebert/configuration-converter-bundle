@@ -21,7 +21,7 @@ class ConfigurationConverter
         }
     }
 
-    public function convert(string $resourceClass, string $format = 'xml', ?string $exportPath = null): string
+    public function convert(string $resourceClass, string $format = 'xml', string $exportPath): string
     {
         if (null === $transformer = $this->transformers[$format] ?? null) {
             throw new \InvalidArgumentException(sprintf(
@@ -34,12 +34,15 @@ class ConfigurationConverter
         $newFormat = $transformer->transform($resourceClass);
         $extra = '';
 
-        if ($transformer instanceof XmlTransformer && $exportPath && null !== $services = $transformer->getFiltersServiceDefinition()) {
-            $this->export("$shortName.services", $services, $exportPath);
+        if ($transformer instanceof XmlTransformer && null !== $services = $transformer->getFiltersServiceDefinition()) {
+            if ($exportPath) {
+                $this->export("$shortName.services", $services, $exportPath);
+            }
+
             $extra = <<<TXT
 # config/packages/api-platform/$shortName.services.$format
 
-{$transformer->getFiltersServiceDefinition()}
+$services
 TXT;
         }
 

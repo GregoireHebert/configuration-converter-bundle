@@ -44,7 +44,6 @@ api_platform:
         jsonld:                        ['application/ld+json']
         jsonapi:                       ['application/vnd.api+json']
     graphql:                           true
-    name_converter:                    'app.name_converter'
     enable_fos_user:                   true
     collection:
         order_parameter_name:          'order'

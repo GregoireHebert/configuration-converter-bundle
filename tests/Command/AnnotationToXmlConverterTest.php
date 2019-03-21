@@ -8,6 +8,7 @@ use ApiPlatform\ConfigurationConverter\Command\ConverterCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Config\Util\XmlUtils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -17,6 +18,9 @@ class AnnotationToXmlConverterTest extends KernelTestCase
      * @var Application
      */
     protected static $application;
+    /**
+     * @var Command
+     */
     protected static $command;
     protected static $commandTester;
 
@@ -37,7 +41,7 @@ class AnnotationToXmlConverterTest extends KernelTestCase
     public function testCommandWithoutArgument(): void
     {
         self::$commandTester->execute(
-            ['command' => self::$command->getName(), 'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book']
+            ['command' => self::$command->getName(), '--resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book']
         );
 
         $output = self::$commandTester->getDisplay();
@@ -46,13 +50,13 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
 
         self::$commandTester->execute(
-            ['command' => self::$command->getName(), 'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Tag']
+            ['command' => self::$command->getName(), '--resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Tag']
         );
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
 
         self::$commandTester->execute(
-            ['command' => self::$command->getName(), 'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Dummy']
+            ['command' => self::$command->getName(), '--resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Dummy']
         );
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
@@ -62,7 +66,7 @@ class AnnotationToXmlConverterTest extends KernelTestCase
     {
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
+            '--resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
             '--format' => 'badformat',
         ]);
 
@@ -74,7 +78,7 @@ class AnnotationToXmlConverterTest extends KernelTestCase
     {
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
+            '--resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
             '--format' => 'xml',
         ]);
 
@@ -90,7 +94,7 @@ class AnnotationToXmlConverterTest extends KernelTestCase
 
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
+            '--resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
             '--output' => self::$kernel->getProjectDir().'/../forbidenDir',
         ]);
 
@@ -99,7 +103,7 @@ class AnnotationToXmlConverterTest extends KernelTestCase
 
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            'resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
+            '--resource' => 'ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\Book',
             '--output' => self::$kernel->getProjectDir().'/../forbidenDir/cannotcreatedir',
         ]);
 
@@ -107,7 +111,7 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         $this->assertStringContainsString('Permission denied', $output);
     }
 
-    public function testXmlResourceOutput(): void
+    public function testXmlNonSpecifiedResourcesOutput(): void
     {
         $output = self::$kernel->getProjectDir().'/config/packages/api-platform/';
         $expected = self::$kernel->getProjectDir().'/config/packages/expected/';
@@ -115,13 +119,10 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         $filesystem = new Filesystem();
         $filesystem->remove($output);
 
-        foreach (['Book', 'Tag', 'Dummy'] as $entityName) {
-            self::$commandTester->execute([
-                'command' => self::$command->getName(),
-                'resource' => "ApiPlatform\ConfigurationConverter\Test\Fixtures\Entity\\$entityName",
-                '--output' => $output,
-            ]);
-        }
+        self::$commandTester->execute([
+            'command' => self::$command->getName(),
+            '--output' => $output,
+        ]);
 
         $resourceSchema = self::$kernel->getProjectDir().'/../../../vendor/api-platform/core/src/Metadata/schema/metadata.xsd';
         $servicesSchema = self::$kernel->getProjectDir().'/../../../vendor/symfony/dependency-injection/Loader/schema/dic/services/services-1.0.xsd';
@@ -133,11 +134,27 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         $this->assertInstanceOf(\DOMDocument::class, $dummy = XmlUtils::loadFile($output.'Dummy.xml', $resourceSchema));
 
         $this->assertFileNotExists($output.'Dummy.services.xml');
+        $this->assertFileNotExists($output.'NotAResource.xml');
 
         $this->assertFileEquals($expected.'Book.xml', $output.'Book.xml');
         $this->assertFileEquals($expected.'Book.services.xml', $output.'Book.services.xml');
         $this->assertFileEquals($expected.'Tag.xml', $output.'Tag.xml');
         $this->assertFileEquals($expected.'Tag.services.xml', $output.'Tag.services.xml');
         $this->assertFileEquals($expected.'Dummy.xml', $output.'Dummy.xml');
+    }
+
+    public function testXmlNonSpecifiedResourcesWithoutOutput(): void
+    {
+        self::$commandTester->execute([
+            'command' => self::$command->getName(),
+        ]);
+
+        $output = self::$commandTester->getDisplay();
+        $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Book.xml', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Book.services.xml', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Dummy.xml', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Tag.xml', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Tag.services.xml', $output);
     }
 }

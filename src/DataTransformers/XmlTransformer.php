@@ -262,7 +262,7 @@ class XmlTransformer implements ConfigurationConverterInterface
                 continue;
             }
 
-            if (!$isCustomOperation = \is_array($operation)) {
+            if (false === $isCustomOperation = \is_array($operation)) {
                 $operationName = $operation;
             }
 

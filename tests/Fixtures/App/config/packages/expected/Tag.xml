@@ -8,7 +8,7 @@
           <attribute>Tag.OrderFilter</attribute>
         </attribute>
       </collectionOperation>
-      <collectionOperation name="post">
+      <collectionOperation name="custom">
         <attribute name="method">POST</attribute>
       </collectionOperation>
     </collectionOperations>

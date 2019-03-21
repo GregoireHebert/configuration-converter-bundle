@@ -13,7 +13,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * @ApiResource(
  *     collectionOperations={
  *         "get"={ "attributes"={"filters"={"tag.name_filter", "unknown.filterName"}} },
- *         "post"={ "method"="POST" }
+ *         "custom"={ "method"="POST", "attributes"={"filters"={"unknown.filterName"}} }
  *     }
  * )
  * @ApiFilter(OrderFilter::class, properties={"name"={ "nulls_comparison"=OrderFilter::NULLS_SMALLEST, "default_direction"="DESC" }})

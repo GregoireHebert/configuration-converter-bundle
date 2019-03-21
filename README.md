@@ -14,7 +14,6 @@ Note: Always double check you new configuration for edge cases that might not be
 
 ### Todo
 
-- [ ] Loop through every already available ApiResource
 - [ ] Add YAML support
 - [ ] Add Annotation support
 
@@ -37,6 +36,12 @@ api_platform_configuration_converter:
 
 The most classic use case is when you started to follow the documentation originally written with annotation.
 By default we recommend the most secure configuration format 'XML'.
+
+If you want to convert every single one of your entities
+
+```shell
+$ php bin/console api:configuration:convert
+```
 
 ```shell
 $ php bin/console api:configuration:convert 'FQCN\Of\Your\Resource'

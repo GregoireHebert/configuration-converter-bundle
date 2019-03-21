@@ -5,6 +5,7 @@ declare(strict_types=1);
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
     ->exclude('tests/Fixtures/App/var')
+    ->exclude('tests/Fixtures/App/cache')
 ;
 
 return PhpCsFixer\Config::create()
