@@ -108,7 +108,7 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         ]);
 
         $output = self::$commandTester->getDisplay();
-        $this->assertStringContainsString('Permission denied', $output);
+        $this->assertStringContainsString('[ERROR] Failed to create', $output);
     }
 
     public function testXmlNonSpecifiedResourcesOutput(): void
