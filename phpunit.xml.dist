@@ -11,8 +11,9 @@
         <ini name="memory_limit" value="-1" />
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak_vendors" />
         <server name="KERNEL_DIR" value="tests/Fixtures/app/" />
-        <server name="KERNEL_CLASS" value="ApiPlatform\ConfigurationConverter\Test\Fixtures\App\AppKernel" />
+        <server name="KERNEL_CLASS" value="ConfigurationConverter\Test\Fixtures\App\AppKernel" />
         <server name="APP_ENV" value="test" />
+        <server name="APP_DEBUG" value="0" />
         <server name="LEGACY" value="0" />
     </php>
 

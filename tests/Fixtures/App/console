@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-namespace ApiPlatform\ConfigurationConverter\Test\Fixtures\App;
+namespace ConfigurationConverter\Test\Fixtures\App;
 
 // Debug only
 

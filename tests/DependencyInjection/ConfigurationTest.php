@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ApiPlatform\ConfigurationConverter\Test\DependencyInjection;
+namespace ConfigurationConverter\Test\DependencyInjection;
 
-use ApiPlatform\ConfigurationConverter\DependencyInjection\Configuration;
+use ConfigurationConverter\DependencyInjection\Configuration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -31,21 +31,21 @@ class ConfigurationTest extends TestCase
     public function testDefaultConfig(): void
     {
         $treeBuilder = $this->configuration->getConfigTreeBuilder();
-        $config = $this->processor->processConfiguration($this->configuration, ['api_platform_configuration_converter' => ['default_export_dir' => 'my/dir']]);
+        $config = $this->processor->processConfiguration($this->configuration, ['configuration_converter' => ['api_platform_default_export_dir' => 'my/dir']]);
 
         $this->assertInstanceOf(ConfigurationInterface::class, $this->configuration);
         $this->assertInstanceOf(TreeBuilder::class, $treeBuilder);
         $this->assertEquals([
-            'default_export_dir' => 'my/dir',
+            'api_platform_default_export_dir' => 'my/dir',
         ], $config);
     }
 
     public function testEmptyDefaultExportDirDescriptionConfig(): void
     {
         $config = $this->processor->processConfiguration($this->configuration, [
-            'api_platform_configuration_converter' => [],
+            'configuration_converter' => [],
         ]);
 
-        $this->assertSame($config['default_export_dir'], '%kernel.project_dir%/config/packages/api-platform/');
+        $this->assertSame($config['api_platform_default_export_dir'], '%kernel.project_dir%/config/packages/api-platform/');
     }
 }

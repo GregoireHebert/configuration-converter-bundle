@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ApiPlatform\ConfigurationConverter\Test\Fixtures\App;
+namespace ConfigurationConverter\Test\Fixtures\App;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 

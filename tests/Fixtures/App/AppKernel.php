@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ApiPlatform\ConfigurationConverter\Test\Fixtures\App;
+namespace ConfigurationConverter\Test\Fixtures\App;
 
-use ApiPlatform\ConfigurationConverter\ConfigurationConverterBundle;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\ApiPlatformBundle;
+use ConfigurationConverter\ConfigurationConverterBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;

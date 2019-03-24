@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ApiPlatform\ConfigurationConverter;
+namespace ConfigurationConverter;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

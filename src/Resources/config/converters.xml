@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+  <services>
+    <service id="configuration_converter.converters.configuration_converter" class="ConfigurationConverter\Converters\ConfigurationConverter" public="false">
+      <argument type="tagged" tag="configuration_converter.converter" />
+      <argument type="tagged" tag="configuration_converter.writer" />
+    </service>
+
+    <service id="configuration_converter.converters.api_platform_xml_converter" class="ConfigurationConverter\Converters\ApiPlatformXmlConverter" public="false">
+      <argument type="service" id="configuration_converter.serializers.api_platform.api_resource_xml_serializer"/>
+      <argument type="service" id="configuration_converter.serializers.api_platform.api_filter_xml_serializer"/>
+      <argument type="service" id="configuration_converter.encoders.api_platform.api_resource_xml_encoder"/>
+      <argument type="service" id="configuration_converter.encoders.api_platform.api_filter_xml_encoder"/>
+      <argument type="service" id="event_dispatcher"/>
+      <tag name="configuration_converter.converter"/>
+    </service>
+
+  </services>
+</container>

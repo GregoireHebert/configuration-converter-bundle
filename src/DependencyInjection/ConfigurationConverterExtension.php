@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ApiPlatform\ConfigurationConverter\DependencyInjection;
+namespace ConfigurationConverter\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,9 +19,13 @@ final class ConfigurationConverterExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('api_platform.configuration_converter.default_export_dir', $config['default_export_dir']);
+        $container->setParameter('configuration_converter.api_platform_default_export_dir', $config['api_platform_default_export_dir']);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('transformers.xml');
+        $loader->load('command.xml');
+        $loader->load('encoders.xml');
+        $loader->load('converters.xml');
+        $loader->load('serializers.xml');
+        $loader->load('writers.xml');
     }
 }

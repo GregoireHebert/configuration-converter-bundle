@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+  <services>
+    <service abstract="true" id="configuration_converter.writers.api_platform_writer" class="ConfigurationConverter\Writers\ApiPlatformWriter" public="false">
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+
+    <service parent="configuration_converter.writers.api_platform_writer" id="configuration_converter.writers.api_platform_cli_writer" class="ConfigurationConverter\Writers\ApiPlatformCliWriter" public="false">
+      <tag name="configuration_converter.writer"/>
+    </service>
+    <service parent="configuration_converter.writers.api_platform_writer" id="configuration_converter.writers.api_platform_file_writer" class="ConfigurationConverter\Writers\ApiPlatformFileWriter" public="false">
+      <tag name="configuration_converter.writer"/>
+    </service>
+  </services>
+</container>

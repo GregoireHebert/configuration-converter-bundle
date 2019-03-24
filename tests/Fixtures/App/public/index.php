@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use ApiPlatform\ConfigurationConverter\Test\Fixtures\App\AppKernel;
+use ConfigurationConverter\Test\Fixtures\App\AppKernel;
 use Symfony\Component\HttpFoundation\Request;
 
 require __DIR__.'/../bootstrap.php';

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ApiPlatform\ConfigurationConverter\Test\DependencyInjection;
+namespace ConfigurationConverter\Test\DependencyInjection;
 
-use ApiPlatform\ConfigurationConverter\DependencyInjection\ConfigurationConverterExtension;
+use ConfigurationConverter\DependencyInjection\ConfigurationConverterExtension;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 class ConfigurationConverterExtensionTest extends TestCase
 {
     const DEFAULT_CONFIG = ['api_platform_configuration_converter' => [
-        'default_export_dir' => '%kernel.project_dir%/config/packages/api-platform/',
+        'api_platform_default_export_dir' => '%kernel.project_dir%/config/packages/api-platform/',
     ]];
 
     private $extension;
@@ -43,10 +43,18 @@ class ConfigurationConverterExtensionTest extends TestCase
     {
         $containerBuilderProphecy = $containerBuilderProphecy = $this->prophesize(ContainerBuilder::class);
         $containerBuilderProphecy->fileExists(Argument::type('string'))->shouldBeCalled();
-        $containerBuilderProphecy->setParameter('api_platform.configuration_converter.default_export_dir', '%kernel.project_dir%/config/packages/api-platform/')->shouldBeCalled();
+        $containerBuilderProphecy->setParameter('configuration_converter.api_platform_default_export_dir', '%kernel.project_dir%/config/packages/api-platform/')->shouldBeCalled();
         $containerBuilderProphecy->hasExtension('http://symfony.com/schema/dic/services')->shouldBeCalled();
-        $containerBuilderProphecy->setDefinition('api_platform.configuration_converter.command.api_resource_convert_configuration_command', Argument::type(Definition::class))->shouldBeCalled();
-        $containerBuilderProphecy->setDefinition('api_platform.configuration_converter.data_transformers.xml_transformer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.command.api_resource_convert_configuration_command', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.encoders.api_platform.api_filter_xml_encoder', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.encoders.api_platform.api_resource_xml_encoder', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.converters.configuration_converter', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.converters.api_platform_xml_converter', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.serializers.api_platform.api_resource_xml_serializer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.serializers.api_platform.api_filter_xml_serializer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.writers.api_platform_writer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.writers.api_platform_cli_writer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.writers.api_platform_file_writer', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilder = $containerBuilderProphecy->reveal();
 
         $this->extension->load(self::DEFAULT_CONFIG, $containerBuilder);

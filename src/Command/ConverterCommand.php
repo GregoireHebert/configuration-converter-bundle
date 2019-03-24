@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ApiPlatform\ConfigurationConverter\Command;
+namespace ConfigurationConverter\Command;
 
-use ApiPlatform\ConfigurationConverter\ConfigurationConverter;
-use ApiPlatform\ConfigurationConverter\DataTransformers\XmlTransformer;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Util\ReflectionClassRecursiveIterator;
+use ConfigurationConverter\Converters\ConfigurationConverter;
 use Doctrine\Common\Annotations\Reader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,7 +18,7 @@ class ConverterCommand extends Command
 {
     protected static $defaultName = 'api:configuration:convert';
 
-    private $xmlTransformer;
+    private $configurationConverter;
     private $defaultExportDir;
     private $resourceClassDirectories;
     /**
@@ -28,9 +27,9 @@ class ConverterCommand extends Command
     private $io;
     private $reader;
 
-    public function __construct(XmlTransformer $xmlTransformer, Reader $reader, string $defaultExportDir, array $resourceClassDirectories)
+    public function __construct(ConfigurationConverter $configurationConverter, Reader $reader, string $defaultExportDir, array $resourceClassDirectories)
     {
-        $this->xmlTransformer = $xmlTransformer;
+        $this->configurationConverter = $configurationConverter;
         $this->reader = $reader;
         $this->defaultExportDir = $defaultExportDir;
         $this->resourceClassDirectories = $resourceClassDirectories;
@@ -60,37 +59,21 @@ class ConverterCommand extends Command
             throw new \InvalidArgumentException('format and output options must be strings (even empty ones).');
         }
 
-        if (!\is_string($resource) || '' === $resource) {
-            foreach (ReflectionClassRecursiveIterator::getReflectionClassesFromDirectories($this->resourceClassDirectories) as $resource => $reflectionClass) {
-                if (null !== $this->reader->getClassAnnotation($reflectionClass, ApiResource::class)) {
-                    $this->io->note(sprintf('Converting resource: %s', $resource));
-                    $this->convertResource($resource, $format, $outputDirectory);
-                }
-            }
-        } else {
-            $this->io->note(sprintf('Converting resource: %s', $resource));
-            $this->convertResource($resource, $format, $outputDirectory);
-        }
-
-        return 0;
-    }
-
-    private function convertResource(string $resource, string $format, string $outputDirectory): int
-    {
         try {
-            $converter = new ConfigurationConverter($this->xmlTransformer);
-            $content = $converter->convert($resource, $format, $outputDirectory);
-
-            if ('' !== $outputDirectory) {
-                $this->io->success(<<<TXT
-Check your configuration in the $outputDirectory directory, and don't forget to configure API Platform to use it.
-https://api-platform.com/docs/core/getting-started/#mapping-the-entities
-TXT
-                );
-            }
-
-            if ('' === $outputDirectory || $this->io->isVerbose()) {
-                $this->io->success($content);
+            if (!\is_string($resource) || '' === $resource) {
+                foreach (ReflectionClassRecursiveIterator::getReflectionClassesFromDirectories($this->resourceClassDirectories) as $resource => $reflectionClass) {
+                    if (null !== $this->reader->getClassAnnotation($reflectionClass, ApiResource::class)) {
+                        $this->io->note(sprintf('Converting resource: %s', $resource));
+                        foreach ($this->configurationConverter->convert($resource, $format, $outputDirectory) as $result) {
+                            $this->io->success($result);
+                        }
+                    }
+                }
+            } else {
+                $this->io->note(sprintf('Converting resource: %s', $resource));
+                foreach ($this->configurationConverter->convert($resource, $format, $outputDirectory) as $result) {
+                    $this->io->success($result);
+                }
             }
 
             return 0;
