@@ -60,7 +60,7 @@ jobs:
       - image: circleci/php:7.2-node-browsers
     environment:
       PHP_CS_FIXER_FUTURE_MODE: 1
-    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
+    working_directory: ~/GregoireHebert/configuration-converter-bundle
     steps:
       - checkout
       - *restore-composer-cache
@@ -84,7 +84,7 @@ jobs:
   phpstan:
     docker:
       - image: circleci/php:7.2-node-browsers
-    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
+    working_directory: ~/GregoireHebert/configuration-converter-bundle
     steps:
       - checkout
       - *restore-composer-cache
@@ -104,7 +104,7 @@ jobs:
     environment:
       SYMFONY_DEPRECATIONS_HELPER: weak_vendors
     parallelism: 2
-    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
+    working_directory: ~/GregoireHebert/configuration-converter-bundle
     steps:
       - checkout
       - *restore-composer-cache
@@ -134,7 +134,7 @@ jobs:
   merge-and-upload-coverage:
     docker:
     - image: circleci/php:7.2-node-browsers
-    working_directory: ~/GregoireHebert/api-platform-config-converter-bundle
+    working_directory: ~/GregoireHebert/configuration-converter-bundle
     steps:
     - checkout
     - *disable-xdebug-php-extension
