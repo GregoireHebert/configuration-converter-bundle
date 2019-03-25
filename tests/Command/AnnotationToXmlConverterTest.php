@@ -143,19 +143,19 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         $this->assertFileEquals($expected.'Dummy.xml', $output.'Dummy.xml');
     }
 
-//
-//    public function testXmlNonSpecifiedResourcesWithoutOutput(): void
-//    {
-//        self::$commandTester->execute([
-//            'command' => self::$command->getName(),
-//        ]);
-//
-//        $output = self::$commandTester->getDisplay();
-//        $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
-//        $this->assertStringContainsString('# config/packages/api-platform/Book.xml', $output);
-//        $this->assertStringContainsString('# config/packages/api-platform/Book.services.xml', $output);
-//        $this->assertStringContainsString('# config/packages/api-platform/Dummy.xml', $output);
-//        $this->assertStringContainsString('# config/packages/api-platform/Tag.xml', $output);
-//        $this->assertStringContainsString('# config/packages/api-platform/Tag.services.xml', $output);
-//    }
+
+    public function testXmlNonSpecifiedResourcesWithoutOutput(): void
+    {
+        self::$commandTester->execute([
+            'command' => self::$command->getName(),
+        ]);
+
+        $output = self::$commandTester->getDisplay();
+        $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Book.xml', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Book.services.xml', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Dummy.xml', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Tag.xml', $output);
+        $this->assertStringContainsString('# config/packages/api-platform/Tag.services.xml', $output);
+    }
 }
