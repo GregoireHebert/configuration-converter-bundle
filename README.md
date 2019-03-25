@@ -20,15 +20,16 @@ Note: Always double check you new configuration for edge cases that might not be
 ### Installation
 
 ```shell
-$ composer require --dev gheb/api-platform-config-converter-bundle
+$ composer require --dev gheb/configuration-converter-bundle
 ```
 
 #### Configuration
 
+
 ```yaml
 # Default configuration.
-api_platform_configuration_converter:
-    default_export_path: '%kernel.project_dir%/config/packages/api-platform/' #(default)
+configuration_converter:
+    api_platform_default_export_path: '%kernel.project_dir%/config/packages/api-platform/' #(default)
 
 ```
 
