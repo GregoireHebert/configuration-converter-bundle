@@ -1,7 +1,7 @@
 # API Platform Configuration Converter
 
-[![CircleCI](https://circleci.com/gh/GregoireHebert/api-platform-config-converter-bundle.svg?style=shield)](https://circleci.com/gh/GregoireHebert/api-platform-config-converter-bundle)
-[![Coverage Status](https://coveralls.io/repos/github/GregoireHebert/api-platform-config-converter-bundle/badge.svg)](https://coveralls.io/github/GregoireHebert/api-platform-config-converter-bundle)
+[![CircleCI](https://circleci.com/gh/GregoireHebert/configuration-converter-bundle.svg?style=shield)](https://circleci.com/gh/GregoireHebert/configuration-converter-bundle)
+[![Coverage Status](https://coveralls.io/repos/github/GregoireHebert/configuration-converter-bundle/badge.svg)](https://coveralls.io/github/GregoireHebert/configuration-converter-bundle)
 
 Do not worry about you configuration at first.
 When you start working with API Platform, the documentation (and because it's easy to make a POC with) show you how to configure your resources with annotations.
