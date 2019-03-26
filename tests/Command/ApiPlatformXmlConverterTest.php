@@ -12,7 +12,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
-class AnnotationToXmlConverterTest extends KernelTestCase
+class ApiPlatformXmlConverterTest extends KernelTestCase
 {
     /**
      * @var Application
@@ -38,7 +38,35 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         $this->assertInstanceOf(ConverterCommand::class, self::$command);
     }
 
-    public function testCommandWithoutArgument(): void
+    public function testCommandWithGoodConfigurationsArgument(): void
+    {
+        self::$commandTester->execute(
+            [
+                'command' => self::$command->getName(),
+                '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
+                '--configurations' => [ConverterCommand::CONVERT_API_PLATFORM],
+            ]
+        );
+
+        $output = self::$commandTester->getDisplay();
+        $this->assertStringContainsString('[NOTE] Converting resource:', $output);
+    }
+
+    public function testCommandWithBadConfigurationsArgument(): void
+    {
+        self::$commandTester->execute(
+            [
+                'command' => self::$command->getName(),
+                '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
+                '--configurations' => ['bad'],
+            ]
+        );
+
+        $output = self::$commandTester->getDisplay();
+        $this->assertStringNotContainsString('[NOTE] Converting resource:', $output);
+    }
+
+    public function testCommandWithoutOuputArgument(): void
     {
         self::$commandTester->execute(
             ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book']
@@ -142,7 +170,6 @@ class AnnotationToXmlConverterTest extends KernelTestCase
         $this->assertFileEquals($expected.'Tag.services.xml', $output.'Tag.services.xml');
         $this->assertFileEquals($expected.'Dummy.xml', $output.'Dummy.xml');
     }
-
 
     public function testXmlNonSpecifiedResourcesWithoutOutput(): void
     {

@@ -45,20 +45,20 @@ $ php bin/console api:configuration:convert
 ```
 
 ```shell
-$ php bin/console api:configuration:convert 'FQCN\Of\Your\Resource'
+$ php bin/console api:configuration:convert -r 'FQCN\Of\Your\Resource'
 ```
 
 If you want to use another format, use `--format|-f` option.
 ```shell
-$ php bin/console api:configuration:convert 'FQCN\Of\Your\Entity' -f 'xml'
+$ php bin/console api:configuration:convert -r 'FQCN\Of\Your\Entity' -f 'xml'
 ```
 
 By default, you'll need to copy and paste the configuration from the CLI output, but you can export the format to a specific directory.
 Use `--output|-o` option. By default it will export to `config/packages/api-platform` directory.
 
 ```shell
-$ php bin/console api:configuration:convert 'FQCN\Of\Your\Entity' -o
-$ php bin/console api:configuration:convert 'FQCN\Of\Your\Entity' -o 'custom/repository'
+$ php bin/console api:configuration:convert -r 'FQCN\Of\Your\Entity' -o
+$ php bin/console api:configuration:convert -r 'FQCN\Of\Your\Entity' -o 'custom/repository'
 ```
 
 #### Contributing
