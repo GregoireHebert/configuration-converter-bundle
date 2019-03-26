@@ -12,11 +12,6 @@ I've made this bundle for this occasion.
 
 Note: Always double check you new configuration for edge cases that might not be covered. And please report it here so every case can fill in the gap.
 
-### Todo
-
-- [ ] Add YAML support
-- [ ] Add Annotation support
-
 ### Installation
 
 ```shell
@@ -63,21 +58,11 @@ $ php bin/console api:configuration:convert -r 'FQCN\Of\Your\Entity' -o 'custom/
 
 #### Contributing
 
-Fork the project, c
+Fork the project, code and follow the contributing.md
 
-```shell
-$ vendor/bin/php-cs-fixer fix
-$ vendor/bin/phpstan -l7 analyze src tests
-```
+### Here is the way I see the next versions, any help is welcome :)
 
-##### Run the tests
-
-```shell
-$ vendor/bin/phpunit
-```
-
-with coverage
-
-```shell
-$ phpdbg -qrr vendor/bin/phpunit --coverage-html dist
-```
+- [ ] Add YAML support
+- [ ] Add serialization groups conversion
+- [ ] Add assertion conversion
+- [ ] Add doctrine conversion
