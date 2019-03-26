@@ -16,6 +16,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConverterCommand extends Command
 {
+    public const CONVERT_API_PLATFORM = 'api_platform';
+
     protected static $defaultName = 'api:configuration:convert';
 
     private $configurationConverter;
@@ -41,9 +43,10 @@ class ConverterCommand extends Command
     {
         $this
             ->setDescription('Convert your configuration from annotation to yaml')
-            ->addOption('resource', 'r', InputOption::VALUE_OPTIONAL, 'ApiResource FQCN. (App\\Entity\\Book)')
-            ->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Format to convert to. xml(default), yaml or annotation', 'xml')
-            ->addOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Output the result in this directory (config/packages/api-platform)', '')
+            ->addOption('resource', 'r', InputOption::VALUE_REQUIRED, 'ApiResource FQCN. (App\\Entity\\Book)')
+            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'Format to convert to. xml(default), yaml or annotation', 'xml')
+            ->addOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Output the result in the default directory (config/packages/api-platform) or in the specified one.', '')
+            ->addOption('configurations', 'c', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Target the configuration type to be converted', [self::CONVERT_API_PLATFORM])
         ;
     }
 
@@ -54,26 +57,15 @@ class ConverterCommand extends Command
         $resource = $input->getOption('resource');
         $format = $input->getOption('format');
         $outputDirectory = $input->getOption('output') ?? $this->defaultExportDir;
+        $configurationList = array_flip((array) $input->getOption('configurations'));
 
         if (!\is_string($format) || !\is_string($outputDirectory)) {
             throw new \InvalidArgumentException('format and output options must be strings (even empty ones).');
         }
 
         try {
-            if (!\is_string($resource) || '' === $resource) {
-                foreach (ReflectionClassRecursiveIterator::getReflectionClassesFromDirectories($this->resourceClassDirectories) as $resource => $reflectionClass) {
-                    if (null !== $this->reader->getClassAnnotation($reflectionClass, ApiResource::class)) {
-                        $this->io->note(sprintf('Converting resource: %s', $resource));
-                        foreach ($this->configurationConverter->convert($resource, $format, $outputDirectory) as $result) {
-                            $this->io->success($result);
-                        }
-                    }
-                }
-            } else {
-                $this->io->note(sprintf('Converting resource: %s', $resource));
-                foreach ($this->configurationConverter->convert($resource, $format, $outputDirectory) as $result) {
-                    $this->io->success($result);
-                }
+            if (isset($configurationList[self::CONVERT_API_PLATFORM])) {
+                $this->convertApiPlatform($resource, $format, $outputDirectory);
             }
 
             return 0;
@@ -82,6 +74,25 @@ class ConverterCommand extends Command
             $this->io->error($e->getMessage());
 
             return 1;
+        }
+    }
+
+    private function convertApiPlatform($resource, ?string $format, ?string $outputDirectory): void
+    {
+        if (!\is_string($resource) || '' === $resource) {
+            foreach (ReflectionClassRecursiveIterator::getReflectionClassesFromDirectories($this->resourceClassDirectories) as $resourceClass => $reflectionClass) {
+                if (null !== $this->reader->getClassAnnotation($reflectionClass, ApiResource::class)) {
+                    $this->io->note(sprintf('Converting resource: %s', $resourceClass));
+                    foreach ($this->configurationConverter->convert($resourceClass, $format, $outputDirectory) as $result) {
+                        $this->io->success($result);
+                    }
+                }
+            }
+        } else {
+            $this->io->note(sprintf('Converting resource: %s', $resource));
+            foreach ($this->configurationConverter->convert($resource, $format, $outputDirectory) as $result) {
+                $this->io->success($result);
+            }
         }
     }
 }
