@@ -22,6 +22,9 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
      * @var Command
      */
     protected static $command;
+    /**
+     * @var CommandTester
+     */
     protected static $commandTester;
 
     protected function setUp(): void
@@ -66,7 +69,7 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
         $this->assertStringNotContainsString('[NOTE] Converting resource:', $output);
     }
 
-    public function testCommandWithoutOuputArgument(): void
+    public function testCommandWithoutOutputArgument(): void
     {
         self::$commandTester->execute(
             ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book']

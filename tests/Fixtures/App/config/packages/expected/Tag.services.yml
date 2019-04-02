@@ -1,0 +1,13 @@
+services:
+    Tag.OrderFilter:
+        parent: api_platform.doctrine.orm.order_filter
+        autowire: false
+        autoconfigure: false
+        public: false
+        arguments:
+            name:
+                argument:
+                    nulls_comparison: nulls_smallest
+                    default_direction: DESC
+        tags:
+            - api_platform.filter

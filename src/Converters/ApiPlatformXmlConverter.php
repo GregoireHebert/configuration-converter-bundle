@@ -36,12 +36,12 @@ final class ApiPlatformXmlConverter implements ConverterInterface
 
     public function support(string $format): bool
     {
-        return 'xml' === $format;
+        return 'xml' === strtolower(trim($format));
     }
 
     public function convert(string $resourceClass): void
     {
-        $apiResourceEncoded = &$this->apiResourceXmlEncoder->encode($resourceClass);
+        $apiResourceEncoded = $this->apiResourceXmlEncoder->encode($resourceClass);
         [$apiFilterEncoded, $apiResourceEncoded] = $this->apiFilterXmlEncoder->fromEncodedApiResource($apiResourceEncoded)->encode($resourceClass);
 
         if (!empty($apiResourceEncoded)) {

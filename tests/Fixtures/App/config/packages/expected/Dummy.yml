@@ -1,0 +1,10 @@
+ConfigurationConverter\Test\Fixtures\Entity\Dummy:
+    attributes: null
+    graphql: null
+    itemOperations: null
+    collectionOperations: null
+    properties:
+        id:
+            readable: true
+            writable: true
+            identifier: true

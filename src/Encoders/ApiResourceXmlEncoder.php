@@ -28,7 +28,7 @@ class ApiResourceXmlEncoder implements ConfigurationEncoderInterface
         $this->propertyNameCollectionFactory = $propertyNameCollectionFactory;
     }
 
-    public function &encode(string $resourceClass): array
+    public function encode(string $resourceClass): array
     {
         $this->resource = [];
         $this->transformResource($resourceClass);

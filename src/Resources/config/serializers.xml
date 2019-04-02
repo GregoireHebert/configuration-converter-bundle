@@ -6,5 +6,7 @@
   <services>
     <service id="configuration_converter.serializers.api_platform.api_resource_xml_serializer" class="ConfigurationConverter\Serializers\ApiResourceXmlSerializer" public="false" />
     <service id="configuration_converter.serializers.api_platform.api_filter_xml_serializer" class="ConfigurationConverter\Serializers\ApiFilterServiceXmlSerializer" public="false" />
+    <service id="configuration_converter.serializers.api_platform.api_resource_yml_serializer" class="ConfigurationConverter\Serializers\ApiResourceYmlSerializer" public="false" />
+    <service id="configuration_converter.serializers.api_platform.api_filter_yml_serializer" class="ConfigurationConverter\Serializers\ApiFilterServiceYmlSerializer" public="false" />
   </services>
 </container>
