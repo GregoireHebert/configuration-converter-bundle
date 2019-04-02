@@ -1,0 +1,50 @@
+services:
+    customShortname.GroupFilter:
+        parent: api_platform.serializer.group_filter
+        autowire: false
+        autoconfigure: false
+        public: false
+        arguments:
+            $overrideDefaultGroups: false
+            $parameterName: groups
+            $whitelist:
+                - allowed_group
+        tags:
+            - api_platform.filter
+    customShortname.PropertyFilter:
+        parent: api_platform.serializer.property_filter
+        autowire: false
+        autoconfigure: false
+        public: false
+        arguments:
+            $overrideDefaultProperties: false
+            $parameterName: propertyfilterparametername
+            $whitelist:
+                argument:
+                    - name
+                    - author
+        tags:
+            - api_platform.filter
+    customShortname.SearchFilter:
+        parent: api_platform.doctrine.orm.search_filter
+        autowire: false
+        autoconfigure: false
+        public: false
+        arguments:
+            id: exact
+            price: exact
+            description: partial
+        tags:
+            - api_platform.filter
+    customShortname.OrderFilter:
+        parent: api_platform.doctrine.orm.order_filter
+        autowire: false
+        autoconfigure: false
+        public: false
+        arguments:
+            validFrom:
+                argument:
+                    nulls_comparison: nulls_smallest
+                    default_direction: DESC
+        tags:
+            - api_platform.filter

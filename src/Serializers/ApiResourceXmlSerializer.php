@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ConfigurationConverter\Serializers;
 
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Encoder\YamlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -13,7 +12,7 @@ class ApiResourceXmlSerializer implements ConfigurationSerializerInterface
 {
     public function serialize(array $data): string
     {
-        $serializer = new Serializer([new ObjectNormalizer()], [new XmlEncoder(), new YamlEncoder()]);
+        $serializer = new Serializer([new ObjectNormalizer()], [new XmlEncoder()]);
 
         return (string) $serializer->encode(
             [

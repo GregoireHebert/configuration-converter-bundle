@@ -1,0 +1,29 @@
+ConfigurationConverter\Test\Fixtures\Entity\Tag:
+    attributes: null
+    graphql: null
+    itemOperations: null
+    collectionOperations:
+        get:
+            attributes:
+                filters:
+                    - tag.name_filter
+                    - unknown.filterName
+            attribute:
+                filters:
+                    0: tag.name_filter
+                    2: Tag.OrderFilter
+        custom:
+            method: POST
+            attributes:
+                filters:
+                    - unknown.filterName
+    properties:
+        id:
+            description: 'var string.'
+            readable: true
+            writable: true
+            identifier: true
+        name:
+            description: 'var string.'
+            readable: true
+            writable: true

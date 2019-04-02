@@ -10,14 +10,14 @@ use ApiPlatform\Core\Serializer\Filter\GroupFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Symfony\Component\HttpFoundation\Request;
 
-final class ApiFilterXmlEncoder extends AbstractApiPlatformFilterEncoder implements ConfigurationEncoderInterface
+class ApiFilterYmlEncoder extends AbstractApiPlatformFilterEncoder implements ConfigurationEncoderInterface
 {
     public function encode(string $resourceClass): array
     {
         $this->filterServicesDefinition = [];
         $this->transformFilters($resourceClass);
 
-        return [array_values($this->filterServicesDefinition), $this->resource];
+        return [$this->filterServicesDefinition, $this->resource];
     }
 
     private function transformFilters(string $resourceClass): void
@@ -44,20 +44,19 @@ final class ApiFilterXmlEncoder extends AbstractApiPlatformFilterEncoder impleme
                 continue;
             }
 
-            $this->transformOperationFilter(array_merge($resourceFilters, $globalResourceFilters), $operationName, $shortName);
+            $this->transformOperationFilter(array_merge($resourceFilters, $globalResourceFilters), $operationName, $shortName, $resourceClass);
         }
 
         // None defined through each collection operation, they've been defined by annotation only
         if (null === $isCustomOperation && null !== $globalResourceFilters) {
-            $this->transformOperationFilter($globalResourceFilters, 'get', $shortName);
+            $this->transformOperationFilter($globalResourceFilters, 'get', $shortName, $resourceClass);
         }
     }
 
-    private function transformOperationFilter(array $resourceFilters, string $operationName, string $resourceShortName): void
+    private function transformOperationFilter(array $resourceFilters, string $operationName, string $resourceShortName, string $resourceClass): void
     {
-        if (!isset($this->resource['collectionOperations']['collectionOperation'])) {
-            $this->resource['collectionOperations']['collectionOperation'][] = [
-                '@name' => 'get',
+        if (!isset($this->resource[$resourceClass]['collectionOperations'])) {
+            $this->resource[$resourceClass]['collectionOperations']['get'] = [
                 'attribute' => null,
             ];
         }
@@ -86,9 +85,9 @@ final class ApiFilterXmlEncoder extends AbstractApiPlatformFilterEncoder impleme
             if ($filter instanceof GroupFilter) {
                 $closure = \Closure::bind(static function ($filter) {
                     return [
-                        ['@key' => '$overrideDefaultGroups', '#' => $filter->overrideDefaultGroups ? 'true' : 'false'],
-                        ['@key' => '$parameterName', '#' => $filter->parameterName],
-                        ['@key' => '$whitelist', '#' => ['argument' => $filter->whitelist]],
+                        '$overrideDefaultGroups' => $filter->overrideDefaultGroups,
+                        '$parameterName' => $filter->parameterName,
+                        '$whitelist' => $filter->whitelist,
                     ];
                 }, null, $filter);
                 $arguments = $closure($filter);
@@ -97,37 +96,31 @@ final class ApiFilterXmlEncoder extends AbstractApiPlatformFilterEncoder impleme
             if ($filter instanceof PropertyFilter) {
                 $closure = \Closure::bind(static function ($filter) {
                     return [
-                        ['@key' => '$overrideDefaultProperties', '#' => $filter->overrideDefaultProperties ? 'true' : 'false'],
-                        ['@key' => '$parameterName', '#' => $filter->parameterName],
-                        ['@key' => '$whitelist', '#' => ['argument' => $filter->whitelist]],
+                        '$overrideDefaultProperties' => $filter->overrideDefaultProperties,
+                        '$parameterName' => $filter->parameterName,
+                        '$whitelist' => ['argument' => $filter->whitelist],
                     ];
                 }, null, $filter);
                 $arguments = $closure($filter);
             }
 
             $this->filterServicesDefinition[$filterId] = [
-                '@id' => $filterId,
-                '@autowire' => 'false',
-                '@autoconfigure' => 'false',
-                '@public' => 'false',
-                '@parent' => self::FILTERS_SERVICES_ID[\get_class($filter)],
-                'argument' => $arguments,
-                'tag' => [
-                    '@name' => 'api_platform.filter',
-                ],
+                'parent' => self::FILTERS_SERVICES_ID[\get_class($filter)],
+                'autowire' => false,
+                'autoconfigure' => false,
+                'public' => false,
+                'arguments' => $arguments,
+                'tags' => ['api_platform.filter'],
             ];
         }
 
         // Update the collection operations
-        foreach ($this->resource['collectionOperations']['collectionOperation'] as &$operation) {
-            if ($operation['@name'] !== $operationName) {
+        foreach ($this->resource[$resourceClass]['collectionOperations'] as $name => &$operation) {
+            if ($name !== $operationName) {
                 return;
             }
 
-            $operation['attribute'][] = [
-                '@name' => 'filters',
-                'attribute' => $resourceFilters,
-            ];
+            $operation['attribute']['filters'] = $resourceFilters;
         }
     }
 
@@ -143,7 +136,7 @@ final class ApiFilterXmlEncoder extends AbstractApiPlatformFilterEncoder impleme
             if (is_numeric($attribute)) {
                 $nodes[] = $value;
             } else {
-                $nodes[] = ['@key' => $attribute, '#' => $value];
+                $nodes[$attribute] = $value;
             }
         }
 

@@ -32,6 +32,7 @@ But don't worry, you can fix CS issues automatically using the [PHP CS Fixer](ht
 
 ```bash
 vendor/bin/php-cs-fixer fix
+vendor/bin/phpstan -l7 analyze src tests
 ```
 
 And then, add fixed file to your commit before push.

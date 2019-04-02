@@ -42,9 +42,9 @@ class ConverterCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Convert your configuration from annotation to yaml')
+            ->setDescription('Convert your configuration from annotation to xml or yaml')
             ->addOption('resource', 'r', InputOption::VALUE_REQUIRED, 'ApiResource FQCN. (App\\Entity\\Book)')
-            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'Format to convert to. xml(default), yaml or annotation', 'xml')
+            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'Format to convert to. xml(default) or yaml', 'xml')
             ->addOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Output the result in the default directory (config/packages/api-platform) or in the specified one.', '')
             ->addOption('configurations', 'c', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Target the configuration type to be converted', [self::CONVERT_API_PLATFORM])
         ;
