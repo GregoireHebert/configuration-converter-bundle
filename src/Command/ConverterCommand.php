@@ -18,7 +18,7 @@ class ConverterCommand extends Command
 {
     public const CONVERT_API_PLATFORM = 'api_platform';
 
-    protected static $defaultName = 'api:configuration:convert';
+    protected static $defaultName = 'configuration:convert';
 
     private $configurationConverter;
     private $defaultExportDir;
