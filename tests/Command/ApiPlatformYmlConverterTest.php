@@ -34,7 +34,7 @@ class ApiPlatformYmlConverterTest extends KernelTestCase
 
     public function testCommandLoaded(): void
     {
-        self::$command = self::$application->find('api:configuration:convert');
+        self::$command = self::$application->find('configuration:convert');
         self::$commandTester = new CommandTester(self::$command);
 
         $this->assertInstanceOf(ConverterCommand::class, self::$command);
