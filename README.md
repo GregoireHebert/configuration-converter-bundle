@@ -19,11 +19,49 @@ Note: Always double check you new configuration for edge cases that might not be
 $ composer require --dev gheb/configuration-converter-bundle
 ```
 
+Register the bundle.
+
+For symfony < 3.4
+
+```
+<?php
+// app/AppKernel.php
+
+public function registerBundles()
+{
+    $bundles = [
+        // ...
+    ];
+
+    if (in_array($this->getEnvironment(), ['dev'])) {
+        //...
+        $bundles[] = new Gheb\ConfigurationConverter\ConfigurationConverterBundle();
+    }
+
+    return $bundles;
+}
+```
+
+For symfony > 4
+
+```
+<?php
+// config/bundles.php
+
+<?php
+
+return [
+    // ...
+    Gheb\ConfigurationConverter\ConfigurationConverterBundle::class => ['dev' => true],
+];
+```
+
 #### Configuration
 
+Configure the bundle to your needs, for example:
 
 ```yaml
-# Default configuration.
+# config/packages/configuration_converter.yaml
 configuration_converter:
     api_platform_default_export_path: '%kernel.project_dir%/config/packages/api-platform/' #(default)
 
@@ -67,7 +105,7 @@ Fork the project, create a branch according to your contribution, code and follo
 
 ### Here is the way I see the next versions, any help is welcome :)
 
-- [*] Add YAML support
+- [x] Add YAML support
 - [ ] Add serialization groups conversion
 - [ ] Add assertion conversion
 - [ ] Add doctrine conversion
