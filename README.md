@@ -101,7 +101,7 @@ $ php bin/console configuration:convert -r 'FQCN\Of\Your\Entity' -o 'custom/repo
 
 #### Contributing
 
-Fork the project, create a branch according to your contribution, code and follow the contributing.md
+Fork the project, create a branch according to your contribution, code and follow the [contributing.md](CONTRIBUTING.md).
 
 ### Here is the way I see the next versions, any help is welcome :)
 
