@@ -1,7 +1,7 @@
 {
     "name": "gheb/configuration-converter-bundle",
     "description": "Convert your API Platform configuration from a format to another",
-    "type": "library",
+    "type": "symfony-bundle",
     "require": {
         "api-platform/core": "^2.4",
         "symfony/http-foundation": "^4.0",
