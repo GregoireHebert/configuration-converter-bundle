@@ -35,7 +35,7 @@ public function registerBundles()
 
     if (in_array($this->getEnvironment(), ['dev'])) {
         //...
-        $bundles[] = new Gheb\ConfigurationConverter\ConfigurationConverterBundle();
+        $bundles[] = new ConfigurationConverter\ConfigurationConverterBundle();
     }
 
     return $bundles;
@@ -52,7 +52,7 @@ For symfony > 4
 
 return [
     // ...
-    Gheb\ConfigurationConverter\ConfigurationConverterBundle::class => ['dev' => true],
+    ConfigurationConverter\ConfigurationConverterBundle::class => ['dev' => true],
 ];
 ```
 
@@ -63,7 +63,7 @@ Configure the bundle to your needs, for example:
 ```yaml
 # config/packages/configuration_converter.yaml
 configuration_converter:
-    api_platform_default_export_path: '%kernel.project_dir%/config/packages/api-platform/' #(default)
+    api_platform_default_export_dir: '%kernel.project_dir%/config/packages/api-platform/' #(default)
 
 ```
 
