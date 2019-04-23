@@ -9,7 +9,7 @@
       <argument type="tagged" tag="configuration_converter.writer" />
     </service>
 
-    <service id="configuration_converter.converters.api_platform_xml_converter" class="ConfigurationConverter\Converters\ApiPlatformXmlConverter" public="false">
+    <service id="configuration_converter.converters.api_platform.xml_converter" class="ConfigurationConverter\Converters\ApiPlatformXmlConverter" public="false">
       <argument type="service" id="configuration_converter.serializers.api_platform.api_resource_xml_serializer"/>
       <argument type="service" id="configuration_converter.serializers.api_platform.api_filter_xml_serializer"/>
       <argument type="service" id="configuration_converter.encoders.api_platform.api_resource_xml_encoder"/>
@@ -18,7 +18,7 @@
       <tag name="configuration_converter.converter"/>
     </service>
 
-    <service id="configuration_converter.converters.api_platform_yml_converter" class="ConfigurationConverter\Converters\ApiPlatformYmlConverter" public="false">
+    <service id="configuration_converter.converters.api_platform.yml_converter" class="ConfigurationConverter\Converters\ApiPlatformYmlConverter" public="false">
       <argument type="service" id="configuration_converter.serializers.api_platform.api_resource_yml_serializer"/>
       <argument type="service" id="configuration_converter.serializers.api_platform.api_filter_yml_serializer"/>
       <argument type="service" id="configuration_converter.encoders.api_platform.api_resource_yml_encoder"/>
@@ -27,5 +27,11 @@
       <tag name="configuration_converter.converter"/>
     </service>
 
+    <service id="configuration_converter.converters.serializer_group.yaml_converter" class="ConfigurationConverter\Converters\SerializerGroupYamlConverter" public="false">
+      <argument type="service" id="configuration_converter.encoders.serializer_group.yaml_encoder"/>
+      <argument type="service" id="configuration_converter.serializers.serializer_group.yaml_serializer"/>
+      <argument type="service" id="event_dispatcher"/>
+      <tag name="configuration_converter.converter"/>
+    </service>
   </services>
 </container>

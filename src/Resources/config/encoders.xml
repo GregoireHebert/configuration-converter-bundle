@@ -25,5 +25,7 @@
       <argument type="service" id="api_platform.metadata.property.metadata_factory.annotation"/>
       <argument type="service" id="api_platform.metadata.property.name_collection_factory.property_info"/>
     </service>
+
+    <service id="configuration_converter.encoders.serializer_group.yaml_encoder" class="ConfigurationConverter\Encoders\SerializerGroupYamlEncoder" public="false" />
   </services>
 </container>

@@ -17,6 +17,10 @@ class ConfigurationConverterExtensionTest extends TestCase
 {
     const DEFAULT_CONFIG = ['api_platform_configuration_converter' => [
         'api_platform_default_export_dir' => '%kernel.project_dir%/config/packages/api-platform/',
+        'serializer_group' => [
+            'default_export_dir' => '%kernel.project_dir%/config/packages/serializer/',
+            'entities_dir' => ['%kernel.project_dir%/src/Entity/'],
+        ],
     ]];
 
     private $extension;
@@ -44,22 +48,34 @@ class ConfigurationConverterExtensionTest extends TestCase
         $containerBuilderProphecy = $containerBuilderProphecy = $this->prophesize(ContainerBuilder::class);
         $containerBuilderProphecy->fileExists(Argument::type('string'))->shouldBeCalled();
         $containerBuilderProphecy->setParameter('configuration_converter.api_platform_default_export_dir', '%kernel.project_dir%/config/packages/api-platform/')->shouldBeCalled();
+        $containerBuilderProphecy->setParameter('configuration_converter.serializer_group.default_export_dir', '%kernel.project_dir%/config/packages/serializer/')->shouldBeCalled();
+        $containerBuilderProphecy->setParameter('configuration_converter.serializer_group.entities_dir', ['%kernel.project_dir%/src/Entity/'])->shouldBeCalled();
         $containerBuilderProphecy->hasExtension('http://symfony.com/schema/dic/services')->shouldBeCalled();
         $containerBuilderProphecy->setDefinition('configuration_converter.command.api_resource_convert_configuration_command', Argument::type(Definition::class))->shouldBeCalled();
+
         $containerBuilderProphecy->setDefinition('configuration_converter.encoders.api_platform.api_filter_xml_encoder', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilderProphecy->setDefinition('configuration_converter.encoders.api_platform.api_filter_yml_encoder', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilderProphecy->setDefinition('configuration_converter.encoders.api_platform.api_resource_xml_encoder', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilderProphecy->setDefinition('configuration_converter.encoders.api_platform.api_resource_yml_encoder', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.encoders.serializer_group.yaml_encoder', Argument::type(Definition::class))->shouldBeCalled();
+
         $containerBuilderProphecy->setDefinition('configuration_converter.converters.configuration_converter', Argument::type(Definition::class))->shouldBeCalled();
-        $containerBuilderProphecy->setDefinition('configuration_converter.converters.api_platform_xml_converter', Argument::type(Definition::class))->shouldBeCalled();
-        $containerBuilderProphecy->setDefinition('configuration_converter.converters.api_platform_yml_converter', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.converters.api_platform.xml_converter', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.converters.api_platform.yml_converter', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.converters.serializer_group.yaml_converter', Argument::type(Definition::class))->shouldBeCalled();
+
         $containerBuilderProphecy->setDefinition('configuration_converter.serializers.api_platform.api_resource_xml_serializer', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilderProphecy->setDefinition('configuration_converter.serializers.api_platform.api_resource_yml_serializer', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilderProphecy->setDefinition('configuration_converter.serializers.api_platform.api_filter_xml_serializer', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilderProphecy->setDefinition('configuration_converter.serializers.api_platform.api_filter_yml_serializer', Argument::type(Definition::class))->shouldBeCalled();
-        $containerBuilderProphecy->setDefinition('configuration_converter.writers.api_platform_writer', Argument::type(Definition::class))->shouldBeCalled();
-        $containerBuilderProphecy->setDefinition('configuration_converter.writers.api_platform_cli_writer', Argument::type(Definition::class))->shouldBeCalled();
-        $containerBuilderProphecy->setDefinition('configuration_converter.writers.api_platform_file_writer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.serializers.serializer_group.yaml_serializer', Argument::type(Definition::class))->shouldBeCalled();
+
+        $containerBuilderProphecy->setDefinition('configuration_converter.writers.api_platform.writer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.writers.api_platform.cli_writer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.writers.api_platform.file_writer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.writers.serializer_group.writer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.writers.serializer_group.cli_writer', Argument::type(Definition::class))->shouldBeCalled();
+        $containerBuilderProphecy->setDefinition('configuration_converter.writers.serializer_group.file_writer', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilder = $containerBuilderProphecy->reveal();
 
         $this->extension->load(self::DEFAULT_CONFIG, $containerBuilder);

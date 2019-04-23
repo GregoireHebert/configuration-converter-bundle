@@ -1,0 +1,6 @@
+ConfigurationConverter\Test\Fixtures\Entity\Book:
+    attributes:
+        name:
+            groups: [read, write, query]
+        author:
+            groups: [read, mutation]

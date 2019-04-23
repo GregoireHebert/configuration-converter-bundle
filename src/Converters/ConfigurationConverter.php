@@ -8,6 +8,9 @@ use ConfigurationConverter\Writers\WriterInterface;
 
 final class ConfigurationConverter
 {
+    public const CONVERT_API_PLATFORM = 'api_platform';
+    public const CONVERT_GROUPS = 'serializer_group';
+
     /**
      * @var ConverterInterface[]
      */
@@ -23,14 +26,14 @@ final class ConfigurationConverter
         $this->writers = $writers;
     }
 
-    public function convert(string $resourceClass, string $format = 'xml', string $exportPath = ''): iterable
+    public function convert(string $resourceClass, string $format = 'xml', array $configurations = [], string $exportPath = ''): iterable
     {
         foreach ($this->writers as $writer) {
             $writer->init();
         }
 
         foreach ($this->converters as $converter) {
-            if ($converter->support($format)) {
+            if ($converter->support($format, $configurations)) {
                 $converter->convert($resourceClass);
             }
         }

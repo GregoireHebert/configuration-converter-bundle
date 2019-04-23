@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ConfigurationConverter\Test\Command;
 
 use ConfigurationConverter\Command\ConverterCommand;
+use ConfigurationConverter\Converters\ConfigurationConverter;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
@@ -46,7 +47,7 @@ class ApiPlatformYmlConverterTest extends KernelTestCase
             [
                 'command' => self::$command->getName(),
                 '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
-                '--configurations' => [ConverterCommand::CONVERT_API_PLATFORM],
+                '--configurations' => [ConfigurationConverter::CONVERT_API_PLATFORM],
                 '--format' => 'yml',
                 '-vvv' => '',
             ]
