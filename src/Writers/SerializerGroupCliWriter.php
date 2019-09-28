@@ -17,7 +17,7 @@ class SerializerGroupCliWriter extends SerializerGroupWriter
         foreach ($this->groups as $serializerGroupConfigurationContent) {
             $result .= <<<TXT
 Check and paste this configuration:
-# config/packages/serializer/$shortName.$format
+# config/packages/serialization/$shortName.$format
 
 {$serializerGroupConfigurationContent->getData()}
 TXT;

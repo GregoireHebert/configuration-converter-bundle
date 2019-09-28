@@ -33,7 +33,7 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('default_export_dir')
                             ->info('Directory path where to export the Serializer Groups configuration')
-                            ->defaultValue('%kernel.project_dir%/config/packages/serializer/')
+                            ->defaultValue('%kernel.project_dir%/config/packages/serialization/')
                         ->end()
                         ->arrayNode('entities_dir')
                             ->prototype('scalar')->end()

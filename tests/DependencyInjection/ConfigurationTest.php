@@ -60,7 +60,7 @@ class ConfigurationTest extends TestCase
 
         $this->assertSame($config['api_platform_default_export_dir'], '%kernel.project_dir%/config/packages/api-platform/');
         $this->assertSame($config['serializer_group'], [
-            'default_export_dir' => '%kernel.project_dir%/config/packages/serializer/',
+            'default_export_dir' => '%kernel.project_dir%/config/packages/serialization/',
             'entities_dir' => ['%kernel.project_dir%/src/Entity/'],
         ]);
     }

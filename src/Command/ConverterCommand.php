@@ -22,7 +22,7 @@ class ConverterCommand extends Command
     private $configurationConverter;
     private $defaultApiPlatformExportDir;
     private $defaultSerializerGroupExportDir;
-    private $entitiesDirectories;
+    private $serializerGroupsEntitiesDirectories;
     private $resourceClassDirectories;
     /**
      * @var SymfonyStyle
@@ -35,14 +35,14 @@ class ConverterCommand extends Command
         Reader $reader,
         string $defaultApiPlatformExportDir,
         string $defaultSerializerGroupExportDir,
-        array $entitiesDirectories,
+        array $serializerGroupsEntitiesDirectories,
         array $resourceClassDirectories
     ) {
         $this->configurationConverter = $configurationConverter;
         $this->reader = $reader;
         $this->defaultApiPlatformExportDir = $defaultApiPlatformExportDir;
         $this->defaultSerializerGroupExportDir = $defaultSerializerGroupExportDir;
-        $this->entitiesDirectories = $entitiesDirectories;
+        $this->serializerGroupsEntitiesDirectories = $serializerGroupsEntitiesDirectories;
         $this->resourceClassDirectories = $resourceClassDirectories;
 
         parent::__construct();
@@ -75,11 +75,11 @@ class ConverterCommand extends Command
 
         try {
             if (in_array(ConfigurationConverter::CONVERT_API_PLATFORM, $configurationList, true)) {
-                $this->convert($resource, $format, $configurationList, $this->resourceClassDirectories, $apiPlatformOutputDirectory, ApiResource::class);
+                $this->convert($resource, $format, ConfigurationConverter::CONVERT_API_PLATFORM, $this->resourceClassDirectories, $apiPlatformOutputDirectory, ApiResource::class);
             }
 
             if (in_array(ConfigurationConverter::CONVERT_GROUPS, $configurationList, true)) {
-                $this->convert($resource, $format, $configurationList, $this->entitiesDirectories, $serializerGroupOutputDirectory, Groups::class);
+                $this->convert($resource, $format, ConfigurationConverter::CONVERT_GROUPS, $this->serializerGroupsEntitiesDirectories, $serializerGroupOutputDirectory, Groups::class);
             }
 
             return 0;
@@ -91,20 +91,20 @@ class ConverterCommand extends Command
         }
     }
 
-    private function convert($resource, ?string $format, array $configurationList, array $inputDirectories, ?string $outputDirectory, string $annotation): void
+    private function convert($resource, ?string $format, string $type, array $inputDirectories, ?string $outputDirectory, string $annotation): void
     {
         if (!\is_string($resource) || '' === $resource) {
             foreach (ReflectionClassRecursiveIterator::getReflectionClassesFromDirectories($inputDirectories) as $resourceClass => $reflectionClass) {
                 if (null !== $this->reader->getClassAnnotation($reflectionClass, $annotation)) {
                     $this->io->note(sprintf('Converting resource: %s', $resourceClass));
-                    foreach ($this->configurationConverter->convert($resourceClass, $format, $configurationList, $outputDirectory) as $result) {
+                    foreach ($this->configurationConverter->convert($resourceClass, $format, $type, $outputDirectory) as $result) {
                         $this->io->success($result);
                     }
                 }
             }
         } else {
             $this->io->note(sprintf('Converting resource: %s', $resource));
-            foreach ($this->configurationConverter->convert($resource, $format, $configurationList, $outputDirectory) as $result) {
+            foreach ($this->configurationConverter->convert($resource, $format, $type, $outputDirectory) as $result) {
                 $this->io->success($result);
             }
         }

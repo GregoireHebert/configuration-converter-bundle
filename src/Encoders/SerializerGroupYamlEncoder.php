@@ -22,6 +22,10 @@ class SerializerGroupYamlEncoder implements ConfigurationEncoderInterface
         $this->resource = [];
         $this->transformGroups($resourceClass);
 
+        if (empty($this->resource)) {
+            return [];
+        }
+
         return [$resourceClass => ['attributes' => $this->resource]];
     }
 

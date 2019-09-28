@@ -60,6 +60,10 @@ class SerializerGroupYamlConverterTest extends KernelTestCase
     public function testCommandWithOutputArgument(): void
     {
         $output = self::$kernel->getProjectDir().'/config/packages/serialization/';
+        $expected = self::$kernel->getProjectDir().'/config/packages/expected_serialization/';
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($output);
 
         self::$commandTester->execute(
             [
@@ -73,5 +77,7 @@ class SerializerGroupYamlConverterTest extends KernelTestCase
         );
 
         $this->assertFileExists($output.'Book.yaml');
+        $this->assertFileNotExists($output.'Book.services.yaml');
+        $this->assertFileEquals($expected.'Book.yaml', $output.'Book.yaml');
     }
 }

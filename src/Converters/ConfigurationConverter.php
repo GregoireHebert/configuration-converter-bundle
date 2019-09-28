@@ -26,14 +26,14 @@ final class ConfigurationConverter
         $this->writers = $writers;
     }
 
-    public function convert(string $resourceClass, string $format = 'xml', array $configurations = [], string $exportPath = ''): iterable
+    public function convert(string $resourceClass, string $format = 'xml', ?string $type = null, string $exportPath = ''): iterable
     {
         foreach ($this->writers as $writer) {
             $writer->init();
         }
 
         foreach ($this->converters as $converter) {
-            if ($converter->support($format, $configurations)) {
+            if ($converter->support($format, $type)) {
                 $converter->convert($resourceClass);
             }
         }

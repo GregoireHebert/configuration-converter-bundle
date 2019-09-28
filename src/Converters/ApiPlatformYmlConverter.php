@@ -34,9 +34,9 @@ final class ApiPlatformYmlConverter implements ConverterInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function support(string $format, array $configurations): bool
+    public function support(string $format, ?string $type): bool
     {
-        return ('yml' === strtolower(trim($format)) || 'yaml' === strtolower(trim($format))) && in_array(ConfigurationConverter::CONVERT_API_PLATFORM, $configurations, true);
+        return ('yml' === strtolower(trim($format)) || 'yaml' === strtolower(trim($format))) && $type === ConfigurationConverter::CONVERT_API_PLATFORM;
     }
 
     public function convert(string $resourceClass): void

@@ -12,7 +12,7 @@ interface WriterInterface
     public function init(): void;
 
     /**
-     * Writes the converted into a file or return the string value to be displayed through CLI.
+     * Writes the converted into a file or return as a string to be displayed through CLI.
      */
     public function write(string $shortName, string $format, string $exportPath): ?string;
 }

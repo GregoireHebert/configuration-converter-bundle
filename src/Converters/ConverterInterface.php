@@ -11,5 +11,5 @@ interface ConverterInterface
     /**
      * Can this converter be used for the asked format?
      */
-    public function support(string $format, array $configurations): bool;
+    public function support(string $format, ?string $type): bool;
 }

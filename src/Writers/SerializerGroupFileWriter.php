@@ -21,7 +21,13 @@ class SerializerGroupFileWriter extends SerializerGroupWriter
 
         return <<<TXT
 Check your configuration in the $exportPath directory, and don't forget to configure Symfony to use it.
-https://symfony.com/doc/current/components/serializer.html#attributes-groups
+```
+# config/packages/framework.yaml
+framework:
+    serializer:
+        mapping:
+            paths: ['%kernel.project_dir%/config/packages/serialization']
+```
 TXT;
     }
 }
