@@ -37,8 +37,8 @@ class ConfigurationTest extends TestCase
                 'serializer_group' => [
                     'default_export_dir' => 'my/export/group/dir',
                     'entities_dir' => ['my/entities/dir'],
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $this->assertInstanceOf(ConfigurationInterface::class, $this->configuration);
@@ -48,7 +48,7 @@ class ConfigurationTest extends TestCase
             'serializer_group' => [
                 'default_export_dir' => 'my/export/group/dir',
                 'entities_dir' => ['my/entities/dir'],
-            ]
+            ],
         ], $config);
     }
 

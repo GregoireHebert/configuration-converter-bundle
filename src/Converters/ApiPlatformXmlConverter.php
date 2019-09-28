@@ -36,7 +36,7 @@ final class ApiPlatformXmlConverter implements ConverterInterface
 
     public function support(string $format, ?string $type): bool
     {
-        return 'xml' === strtolower(trim($format)) && $type === ConfigurationConverter::CONVERT_API_PLATFORM;
+        return 'xml' === strtolower(trim($format)) && ConfigurationConverter::CONVERT_API_PLATFORM === $type;
     }
 
     public function convert(string $resourceClass): void

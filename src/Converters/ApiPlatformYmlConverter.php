@@ -36,7 +36,7 @@ final class ApiPlatformYmlConverter implements ConverterInterface
 
     public function support(string $format, ?string $type): bool
     {
-        return ('yml' === strtolower(trim($format)) || 'yaml' === strtolower(trim($format))) && $type === ConfigurationConverter::CONVERT_API_PLATFORM;
+        return ('yml' === strtolower(trim($format)) || 'yaml' === strtolower(trim($format))) && ConfigurationConverter::CONVERT_API_PLATFORM === $type;
     }
 
     public function convert(string $resourceClass): void

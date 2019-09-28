@@ -27,7 +27,7 @@ final class SerializerGroupYamlConverter implements ConverterInterface
 
     public function support(string $format, ?string $type): bool
     {
-        return ('yml' === strtolower(trim($format)) || 'yaml' === strtolower(trim($format))) && $type === ConfigurationConverter::CONVERT_GROUPS;
+        return ('yml' === strtolower(trim($format)) || 'yaml' === strtolower(trim($format))) && ConfigurationConverter::CONVERT_GROUPS === $type;
     }
 
     public function convert(string $resourceClass): void

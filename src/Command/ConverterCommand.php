@@ -74,11 +74,11 @@ class ConverterCommand extends Command
         }
 
         try {
-            if (in_array(ConfigurationConverter::CONVERT_API_PLATFORM, $configurationList, true)) {
+            if (\in_array(ConfigurationConverter::CONVERT_API_PLATFORM, $configurationList, true)) {
                 $this->convert($resource, $format, ConfigurationConverter::CONVERT_API_PLATFORM, $this->resourceClassDirectories, $apiPlatformOutputDirectory, ApiResource::class);
             }
 
-            if (in_array(ConfigurationConverter::CONVERT_GROUPS, $configurationList, true)) {
+            if (\in_array(ConfigurationConverter::CONVERT_GROUPS, $configurationList, true)) {
                 $this->convert($resource, $format, ConfigurationConverter::CONVERT_GROUPS, $this->serializerGroupsEntitiesDirectories, $serializerGroupOutputDirectory, Groups::class);
             }
 

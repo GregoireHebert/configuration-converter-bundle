@@ -13,7 +13,8 @@ class SerializerGroupYamlEncoder implements ConfigurationEncoderInterface
     private $resource;
     private $classMetadataFactory;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
     }
 
@@ -33,8 +34,7 @@ class SerializerGroupYamlEncoder implements ConfigurationEncoderInterface
     {
         $resourceMetadata = $this->classMetadataFactory->getMetadataFor($resourceClass);
 
-        foreach ($resourceMetadata->getAttributesMetadata() as $attribute)
-        {
+        foreach ($resourceMetadata->getAttributesMetadata() as $attribute) {
             if (empty($groups = $attribute->getGroups())) {
                 continue;
             }
