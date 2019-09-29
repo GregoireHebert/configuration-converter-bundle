@@ -1,4 +1,8 @@
 parameters:
+    level: 7
+    paths:
+        - src
+        - tests
     autoload_files:
         - tests/Fixtures/App/AppKernel.php
     excludes_analyse:
@@ -6,3 +10,7 @@ parameters:
         - src/DependencyInjection/Configuration.php
     ignoreErrors:
         - '#Call to an undefined method Prophecy\\Prophecy\\ObjectProphecy(|.*)?::[a-zA-Z0-9_]+\(\)#'
+        # https://github.com/phpstan/phpstan/issues/1482
+        -
+            message: "#Call to function method_exists\\(\\) with 'Symfony\\\\\\\\Component.+' and 'removeBindings' will always evaluate to false\\.#"
+            path: %currentWorkingDirectory%/tests/DependencyInjection/ConfigurationConverterExtensionTest.php

@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Test\DependencyInjection;
 
-use ConfigurationConverter\Command\ConverterCommand;
 use ConfigurationConverter\DependencyInjection\ConfigurationConverterExtension;
 use Prophecy\Argument;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -86,7 +82,7 @@ class ConfigurationConverterExtensionTest extends KernelTestCase
 
         // irrelevant, but to prevent errors
         if (method_exists(ContainerBuilder::class, 'removeBindings')) {
-            $containerBuilderProphecy->removeBindings(Argument::type('string'))->will(function () {});
+            $containerBuilderProphecy->removeBindings(Argument::type('string'))->will(function (): void {});
         }
 
         $containerBuilder = $containerBuilderProphecy->reveal();
