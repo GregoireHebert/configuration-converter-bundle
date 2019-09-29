@@ -21,6 +21,18 @@ class ApiPlatformYmlConverterTest extends AbstractConverterTest
             ]
         );
 
+        $apiPlatformOutput = self::$kernel->getProjectDir().self::API_PLATFORM_OUTPUT;
+        $output = self::$kernel->getProjectDir().self::SERIALIZER_GROUP_OUTPUT;
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($output);
+        $filesystem->remove($apiPlatformOutput);
+
+        $this->assertFileNotExists($apiPlatformOutput.'Book.yml');
+        $this->assertFileNotExists($apiPlatformOutput.'Book.services.yml');
+        $this->assertFileNotExists($output.'Book.yml');
+        $this->assertFileNotExists($output.'Book.services.yml');
+
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[NOTE] Converting resource:', $output);
     }

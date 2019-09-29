@@ -20,6 +20,18 @@ class ApiPlatformXmlConverterTest extends AbstractConverterTest
             ]
         );
 
+        $apiPlatformOutput = self::$kernel->getProjectDir().self::API_PLATFORM_OUTPUT;
+        $output = self::$kernel->getProjectDir().self::SERIALIZER_GROUP_OUTPUT;
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($output);
+        $filesystem->remove($apiPlatformOutput);
+
+        $this->assertFileNotExists($apiPlatformOutput.'Book.xml');
+        $this->assertFileNotExists($apiPlatformOutput.'Book.services.xml');
+        $this->assertFileNotExists($output.'Book.xml');
+        $this->assertFileNotExists($output.'Book.services.xml');
+
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[NOTE] Converting resource:', $output);
     }
@@ -81,6 +93,18 @@ class ApiPlatformXmlConverterTest extends AbstractConverterTest
             '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
             '--format' => 'xml',
         ]);
+
+        $apiPlatformOutput = self::$kernel->getProjectDir().self::API_PLATFORM_OUTPUT;
+        $output = self::$kernel->getProjectDir().self::SERIALIZER_GROUP_OUTPUT;
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($output);
+        $filesystem->remove($apiPlatformOutput);
+
+        $this->assertFileNotExists($apiPlatformOutput.'Book.xml');
+        $this->assertFileNotExists($apiPlatformOutput.'Book.services.xml');
+        $this->assertFileNotExists($output.'Book.xml');
+        $this->assertFileNotExists($output.'Book.services.xml');
 
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
