@@ -28,7 +28,7 @@ final class Configuration implements ConfigurationInterface
                     ->info('Directory path where to export the API Platform configuration')
                     ->defaultValue('%kernel.project_dir%/config/packages/api-platform/')
                 ->end()
-                ->arrayNode('serializer_group')
+                ->arrayNode('serializer_groups')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('default_export_dir')

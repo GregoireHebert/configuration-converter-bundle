@@ -34,7 +34,7 @@ class ConfigurationTest extends TestCase
         $config = $this->processor->processConfiguration($this->configuration, [
             'configuration_converter' => [
                 'api_platform_default_export_dir' => 'my/dir',
-                'serializer_group' => [
+                'serializer_groups' => [
                     'default_export_dir' => 'my/export/group/dir',
                     'entities_dir' => ['my/entities/dir'],
                 ],
@@ -45,7 +45,7 @@ class ConfigurationTest extends TestCase
         $this->assertInstanceOf(TreeBuilder::class, $treeBuilder);
         $this->assertEquals([
             'api_platform_default_export_dir' => 'my/dir',
-            'serializer_group' => [
+            'serializer_groups' => [
                 'default_export_dir' => 'my/export/group/dir',
                 'entities_dir' => ['my/entities/dir'],
             ],
@@ -59,7 +59,7 @@ class ConfigurationTest extends TestCase
         ]);
 
         $this->assertSame($config['api_platform_default_export_dir'], '%kernel.project_dir%/config/packages/api-platform/');
-        $this->assertSame($config['serializer_group'], [
+        $this->assertSame($config['serializer_groups'], [
             'default_export_dir' => '%kernel.project_dir%/config/packages/serialization/',
             'entities_dir' => ['%kernel.project_dir%/src/Entity/'],
         ]);

@@ -17,7 +17,7 @@ class ConfigurationConverterExtensionTest extends TestCase
 {
     const DEFAULT_CONFIG = ['api_platform_configuration_converter' => [
         'api_platform_default_export_dir' => '%kernel.project_dir%/config/packages/api-platform/',
-        'serializer_group' => [
+        'serializer_groups' => [
             'default_export_dir' => '%kernel.project_dir%/config/packages/serializer/',
             'entities_dir' => ['%kernel.project_dir%/src/Entity/'],
         ],
