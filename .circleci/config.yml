@@ -1,123 +1,148 @@
-version: 2
+version: 2.1
 
-reusable-steps:
-  - &clear-test-app-cache
-    run:
-      name: Clear test app cache
-      command: tests/Fixtures/App/console cache:clear
-  - &restore-composer-cache
-    restore_cache:
-      keys:
-        - composer-cache-{{ .Revision }}
-        - composer-cache-{{ .Branch }}
-        - composer-cache
-  - &restore-php-cs-fixer-cache
-    restore_cache:
-      keys:
-        - php-cs-fixer-cache-{{ .Revision }}
-        - php-cs-fixer-cache-{{ .Branch }}
-        - php-cs-fixer-cache
-  - &disable-xdebug-php-extension
-    run:
-      name: Disable Xdebug PHP extension
-      command: sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-  - &disable-php-memory-limit
-    run:
-      name: Disable PHP memory limit
-      command: echo 'memory_limit=-1' | sudo tee -a /usr/local/etc/php/php.ini
-  - &update-composer
-    run:
-      name: Update Composer
-      command: sudo composer self-update
-  - &save-composer-cache-by-revision
-    save_cache:
-      paths:
-        - ~/.composer/cache
-      key: composer-cache-{{ .Revision }}-{{ .BuildNum }}
-  - &save-composer-cache-by-branch
-    save_cache:
-      paths:
-        - ~/.composer/cache
-      key: composer-cache-{{ .Branch }}-{{ .BuildNum }}
-  - &save-php-cs-fixer-cache-by-branch
-    save_cache:
-      paths:
-        - .php_cs.cache
-      key: php-cs-fixer-cache-{{ .Branch }}-{{ .BuildNum }}
-  - &save-php-cs-fixer-cache-by-revision
-    save_cache:
-      paths:
-        - .php_cs.cache
-      key: php-cs-fixer-cache-{{ .Revision }}-{{ .BuildNum }}
-  - &update-project-dependencies
-    run:
-      name: Update project dependencies
-      command: composer update --prefer-dist --no-progress --no-suggest --ansi
+commands:
+  clear-test-app-cache:
+    steps:
+      - run:
+          name: Clear test app cache
+          command: tests/Fixtures/App/console cache:clear
+  restore-composer-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - composer-cache-{{ .Revision }}
+            - composer-cache-{{ .Branch }}
+            - composer-cache
+  restore-php-cs-fixer-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - php-cs-fixer-cache-{{ .Revision }}
+            - php-cs-fixer-cache-{{ .Branch }}
+            - php-cs-fixer-cache
+  restore-phpstan-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - phpstan-cache-{{ .Revision }}
+            - phpstan-cache-{{ .Branch }}
+            - phpstan-cache
+  disable-xdebug-php-extension:
+    steps:
+      - run:
+          name: Disable Xdebug PHP extension
+          command: sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+  disable-php-memory-limit:
+    steps:
+      - run:
+          name: Disable PHP memory limit
+          command: echo 'memory_limit=-1' | sudo tee -a /usr/local/etc/php/php.ini
+  update-composer:
+    steps:
+      - run:
+          name: Update Composer
+          command: sudo composer self-update
+  save-composer-cache:
+    steps:
+      - save_cache:
+          paths:
+            - ~/.composer/cache
+          key: composer-cache-{{ .Branch }}-{{ .BuildNum }}
+      - save_cache:
+          paths:
+            - ~/.composer/cache
+          key: composer-cache-{{ .Revision }}-{{ .BuildNum }}
+  save-php-cs-fixer-cache:
+    steps:
+      - save_cache:
+          paths:
+            - .php_cs.cache
+          key: php-cs-fixer-cache-{{ .Branch }}-{{ .BuildNum }}
+      - save_cache:
+          paths:
+            - .php_cs.cache
+          key: php-cs-fixer-cache-{{ .Revision }}-{{ .BuildNum }}
+  save-phpstan-cache:
+    steps:
+      - save_cache:
+          paths:
+            - /tmp/phpstan/cache
+          key: phpstan-cache-{{ .Branch }}-{{ .BuildNum }}
+      - save_cache:
+          paths:
+            - /tmp/phpstan/cache
+          key: phpstan-cache-{{ .Revision }}-{{ .BuildNum }}
+  update-project-dependencies:
+    steps:
+      - run:
+          name: Update project dependencies
+          command: composer update --prefer-dist --no-progress --no-suggest --ansi
+
+executors:
+  php:
+    docker:
+      - image: circleci/php:7.2-node
 
 jobs:
   php-cs-fixer:
-    docker:
-      - image: circleci/php:7.2-node-browsers
+    executor: php
     environment:
       PHP_CS_FIXER_FUTURE_MODE: 1
     working_directory: ~/GregoireHebert/configuration-converter-bundle
     steps:
       - checkout
-      - *restore-composer-cache
-      - *restore-php-cs-fixer-cache
-      - *disable-xdebug-php-extension
-      - *disable-php-memory-limit
-      - *update-composer
+      - disable-xdebug-php-extension
+      - disable-php-memory-limit
+      - update-composer
+      - restore-composer-cache
       - run:
           name: Install PHP-CS-Fixer
           command: composer global require friendsofphp/php-cs-fixer:^2.15@dev
-      - *save-composer-cache-by-revision
-      - *save-composer-cache-by-branch
+      - save-composer-cache
+      - restore-php-cs-fixer-cache
       - run:
           name: Run PHP-CS-Fixer
           command: |
             export PATH="$PATH:$HOME/.composer/vendor/bin"
             php-cs-fixer fix --dry-run --diff --ansi
-      - *save-php-cs-fixer-cache-by-revision
-      - *save-php-cs-fixer-cache-by-branch
+      - save-php-cs-fixer-cache
 
   phpstan:
-    docker:
-      - image: circleci/php:7.2-node-browsers
+    executor: php
+    environment:
+      # https://github.com/phpstan/phpstan-symfony/issues/37
+      APP_DEBUG: 1
     working_directory: ~/GregoireHebert/configuration-converter-bundle
     steps:
       - checkout
-      - *restore-composer-cache
-      - *disable-xdebug-php-extension
-      - *disable-php-memory-limit
-      - *update-composer
-      - *update-project-dependencies
-      - *save-composer-cache-by-revision
-      - *save-composer-cache-by-branch
+      - update-composer
+      - disable-xdebug-php-extension
+      - disable-php-memory-limit
+      - restore-composer-cache
+      - update-project-dependencies
+      - save-composer-cache
+      - restore-phpstan-cache
       - run:
           name: Run PHPStan
-          command: vendor/bin/phpstan analyse -l7 --ansi src tests
+          command: vendor/bin/phpstan analyse --ansi
+      - save-phpstan-cache
 
   phpunit-coverage:
-    docker:
-      - image: circleci/php:7.2-node-browsers
-    environment:
-      SYMFONY_DEPRECATIONS_HELPER: weak_vendors
-    parallelism: 2
+    executor: php
     working_directory: ~/GregoireHebert/configuration-converter-bundle
     steps:
       - checkout
-#      - *restore-composer-cache
-      - *disable-xdebug-php-extension
-      - *disable-php-memory-limit
-      - *update-composer
-      - *update-project-dependencies
-#      - *save-composer-cache-by-revision
-#      - *save-composer-cache-by-branch
-      - *clear-test-app-cache
+      - disable-xdebug-php-extension
+      - disable-php-memory-limit
+      - restore-composer-cache
+      - update-project-dependencies
+      - save-composer-cache
+      - clear-test-app-cache
       - run:
           name: Run PHPUnit tests
-          command: phpdbg -qrr vendor/bin/phpunit --coverage-php build/cov/coverage.cov --log-junit build/logs/junit.xml --colors=always
+          command: |
+            mkdir -p build/logs/phpunit build/coverage
+            phpdbg -qrr vendor/bin/phpunit --coverage-php build/cov/coverage.cov --log-junit build/logs/junit.xml --colors=always
       - store_test_results:
           path: build/logs
       - store_artifacts:
@@ -132,34 +157,33 @@ jobs:
             - cov
 
   merge-and-upload-coverage:
-    docker:
-    - image: circleci/php:7.2-node-browsers
+    executor: php
     working_directory: ~/GregoireHebert/configuration-converter-bundle
     steps:
-    - checkout
-    - *disable-xdebug-php-extension
-    - *disable-php-memory-limit
-    - run:
-        name: Download phpcov
-        command: wget https://phar.phpunit.de/phpcov.phar
-    - attach_workspace:
-        at: build
-    - run:
-        name: Merge code coverage reports
-        command: |
-          mkdir -p build/logs
-          phpdbg -qrr phpcov.phar merge --clover build/logs/clover.xml build/cov
-    - store_artifacts:
-        path: build/logs/clover.xml
-        destination: build/logs/clover.xml
-    - run:
-        name: Upload code coverage report to Coveralls
-        command: |
-          if [ ! -z "$COVERALLS_REPO_TOKEN" ]; then
-            npx @cedx/coveralls build/logs/clover.xml
-          else
-            echo 'Skipped'
-          fi
+      - checkout
+      - disable-xdebug-php-extension
+      - disable-php-memory-limit
+      - run:
+          name: Download phpcov
+          command: wget https://phar.phpunit.de/phpcov.phar
+      - attach_workspace:
+          at: build
+      - run:
+          name: Merge code coverage reports
+          command: |
+            mkdir -p build/logs
+            phpdbg -qrr phpcov.phar merge --clover build/logs/clover.xml build/cov
+      - store_artifacts:
+          path: build/logs/clover.xml
+          destination: build/logs/clover.xml
+      - run:
+          name: Upload code coverage report to Coveralls
+          command: |
+            if [ ! -z "$COVERALLS_REPO_TOKEN" ]; then
+              npx @cedx/coveralls build/logs/clover.xml
+            else
+              echo 'Skipped'
+            fi
 
 workflows:
   version: 2
@@ -167,9 +191,6 @@ workflows:
     jobs:
       - php-cs-fixer
       - phpstan
-  test-with-coverage:
+  coverage:
     jobs:
       - phpunit-coverage
-      - merge-and-upload-coverage:
-          requires:
-            - phpunit-coverage
