@@ -30,7 +30,7 @@ api_platform:
         This is a test API.
         Made with love
     mapping:
-        paths: ['%kernel.project_dir%/../Entity']
+        paths: ['%kernel.project_dir%/src/Entity']
     allow_plain_identifiers:           true
     formats:
         jsonld:                        ['application/ld+json']

@@ -34,9 +34,9 @@ final class ApiPlatformXmlConverter implements ConverterInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function support(string $format): bool
+    public function support(string $format, ?string $type): bool
     {
-        return 'xml' === strtolower(trim($format));
+        return 'xml' === strtolower(trim($format)) && ConfigurationConverter::CONVERT_API_PLATFORM === $type;
     }
 
     public function convert(string $resourceClass): void

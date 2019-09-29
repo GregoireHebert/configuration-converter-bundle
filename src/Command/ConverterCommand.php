@@ -13,15 +13,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class ConverterCommand extends Command
 {
-    public const CONVERT_API_PLATFORM = 'api_platform';
-
     protected static $defaultName = 'configuration:convert';
 
     private $configurationConverter;
-    private $defaultExportDir;
+    private $defaultApiPlatformExportDir;
+    private $defaultSerializerGroupExportDir;
+    private $serializerGroupsEntitiesDirectories;
     private $resourceClassDirectories;
     /**
      * @var SymfonyStyle
@@ -29,11 +30,19 @@ class ConverterCommand extends Command
     private $io;
     private $reader;
 
-    public function __construct(ConfigurationConverter $configurationConverter, Reader $reader, string $defaultExportDir, array $resourceClassDirectories)
-    {
+    public function __construct(
+        ConfigurationConverter $configurationConverter,
+        Reader $reader,
+        string $defaultApiPlatformExportDir,
+        string $defaultSerializerGroupExportDir,
+        array $serializerGroupsEntitiesDirectories,
+        array $resourceClassDirectories
+    ) {
         $this->configurationConverter = $configurationConverter;
         $this->reader = $reader;
-        $this->defaultExportDir = $defaultExportDir;
+        $this->defaultApiPlatformExportDir = $defaultApiPlatformExportDir;
+        $this->defaultSerializerGroupExportDir = $defaultSerializerGroupExportDir;
+        $this->serializerGroupsEntitiesDirectories = $serializerGroupsEntitiesDirectories;
         $this->resourceClassDirectories = $resourceClassDirectories;
 
         parent::__construct();
@@ -45,8 +54,9 @@ class ConverterCommand extends Command
             ->setDescription('Convert your configuration from annotation to xml or yaml')
             ->addOption('resource', 'r', InputOption::VALUE_REQUIRED, 'ApiResource FQCN. (App\\Entity\\Book)')
             ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'Format to convert to. xml(default) or yaml', 'xml')
-            ->addOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Output the result in the default directory (config/packages/api-platform) or in the specified one.', '')
-            ->addOption('configurations', 'c', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Target the configuration type to be converted', [self::CONVERT_API_PLATFORM])
+            ->addOption('api-platform-output', 'apo', InputOption::VALUE_OPTIONAL, 'Output the API-Platform result in the default directory (config/packages/api-platform) or in the specified one.', '')
+            ->addOption('serializer-groups-output', 'sgo', InputOption::VALUE_OPTIONAL, 'Output the Serializer Groups result in the default directory (config/packages/serialization) or in the specified one.', '')
+            ->addOption('configurations', 'c', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Target the configuration type to be converted', [ConfigurationConverter::CONVERT_API_PLATFORM, ConfigurationConverter::CONVERT_GROUPS])
         ;
     }
 
@@ -56,16 +66,21 @@ class ConverterCommand extends Command
 
         $resource = $input->getOption('resource');
         $format = $input->getOption('format');
-        $outputDirectory = $input->getOption('output') ?? $this->defaultExportDir;
-        $configurationList = array_flip((array) $input->getOption('configurations'));
+        $apiPlatformOutputDirectory = $input->getOption('api-platform-output') ?? $this->defaultApiPlatformExportDir;
+        $serializerGroupOutputDirectory = $input->getOption('serializer-groups-output') ?? $this->defaultSerializerGroupExportDir;
+        $configurationList = (array) $input->getOption('configurations');
 
-        if (!\is_string($format) || !\is_string($outputDirectory)) {
+        if (!\is_string($format) || !\is_string($apiPlatformOutputDirectory)) {
             throw new \InvalidArgumentException('format and output options must be strings (even empty ones).');
         }
 
         try {
-            if (isset($configurationList[self::CONVERT_API_PLATFORM])) {
-                $this->convertApiPlatform($resource, $format, $outputDirectory);
+            if (\in_array(ConfigurationConverter::CONVERT_API_PLATFORM, $configurationList, true)) {
+                $this->convert($resource, $format, ConfigurationConverter::CONVERT_API_PLATFORM, $this->resourceClassDirectories, $apiPlatformOutputDirectory, ApiResource::class);
+            }
+
+            if (\in_array(ConfigurationConverter::CONVERT_GROUPS, $configurationList, true)) {
+                $this->convert($resource, $format, ConfigurationConverter::CONVERT_GROUPS, $this->serializerGroupsEntitiesDirectories, $serializerGroupOutputDirectory, Groups::class);
             }
 
             return 0;
@@ -77,22 +92,46 @@ class ConverterCommand extends Command
         }
     }
 
-    private function convertApiPlatform($resource, ?string $format, ?string $outputDirectory): void
+    private function convert($resource, ?string $format, string $type, array $inputDirectories, ?string $outputDirectory, string $annotation): void
     {
         if (!\is_string($resource) || '' === $resource) {
-            foreach (ReflectionClassRecursiveIterator::getReflectionClassesFromDirectories($this->resourceClassDirectories) as $resourceClass => $reflectionClass) {
-                if (null !== $this->reader->getClassAnnotation($reflectionClass, ApiResource::class)) {
-                    $this->io->note(sprintf('Converting resource: %s', $resourceClass));
-                    foreach ($this->configurationConverter->convert($resourceClass, $format, $outputDirectory) as $result) {
-                        $this->io->success($result);
-                    }
+            foreach (ReflectionClassRecursiveIterator::getReflectionClassesFromDirectories($inputDirectories) as $resourceClass => $reflectionClass) {
+                if (!$this->hasAnnotation($reflectionClass, $annotation)) {
+                    $this->io->note(sprintf('Cannot Convert resource: %s', $resourceClass));
+                    continue;
+                }
+
+                $this->io->note(sprintf('Converting resource: %s', $resourceClass));
+                foreach ($this->configurationConverter->convert($resourceClass, $format, $type, $outputDirectory) as $result) {
+                    $this->io->success($result);
                 }
             }
         } else {
+            if (!$this->hasAnnotation(new \ReflectionClass($resource), $annotation)) {
+                $this->io->note('Nothing to convert.');
+
+                return;
+            }
+
             $this->io->note(sprintf('Converting resource: %s', $resource));
-            foreach ($this->configurationConverter->convert($resource, $format, $outputDirectory) as $result) {
+            foreach ($this->configurationConverter->convert($resource, $format, $type, $outputDirectory) as $result) {
                 $this->io->success($result);
             }
         }
+    }
+
+    private function hasAnnotation(\ReflectionClass $reflectionClass, string $annotation): bool
+    {
+        if (null !== $this->reader->getClassAnnotation($reflectionClass, $annotation)) {
+            return true;
+        }
+
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if (null !== $this->reader->getPropertyAnnotation($reflectionProperty, $annotation)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

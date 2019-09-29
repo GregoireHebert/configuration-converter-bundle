@@ -8,7 +8,7 @@ use Symfony\Component\Serializer\Encoder\YamlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-class ApiResourceYmlSerializer implements ConfigurationSerializerInterface
+class SerializerGroupYamlSerializer implements ConfigurationSerializerInterface
 {
     public function serialize(array $data): string
     {
@@ -18,7 +18,7 @@ class ApiResourceYmlSerializer implements ConfigurationSerializerInterface
             $data,
             'yml',
             [
-                'yaml_inline' => 6,
+                'yaml_inline' => 4,
             ]
         );
     }

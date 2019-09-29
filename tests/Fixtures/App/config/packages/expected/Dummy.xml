@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <resources xmlns="https://api-platform.com/schema/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://api-platform.com/schema/metadata https://api-platform.com/schema/metadata/metadata-2.0.xsd">
-  <resource class="ConfigurationConverter\Test\Fixtures\Entity\Dummy">
-    <property name="id" readable="true" writable="true" required="false" identifier="true"/>
+  <resource class="ConfigurationConverter\Test\Fixtures\App\src\Entity\Dummy">
+    <property name="id" readable="true" writable="true" identifier="true"/>
   </resource>
 </resources>

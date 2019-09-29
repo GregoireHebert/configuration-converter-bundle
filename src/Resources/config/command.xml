@@ -4,10 +4,12 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
   <services>
-    <service id="configuration_converter.command.api_resource_convert_configuration_command" class="ConfigurationConverter\Command\ConverterCommand" autowire="true" autoconfigure="true" public="false">
+    <service id="configuration_converter.command.api_resource_convert_configuration_command" class="ConfigurationConverter\Command\ConverterCommand" autowire="false" autoconfigure="false" public="false">
       <argument type="service" id="configuration_converter.converters.configuration_converter" />
       <argument type="service" id="annotation_reader" />
       <argument>%configuration_converter.api_platform_default_export_dir%</argument>
+      <argument>%configuration_converter.serializer_group.default_export_dir%</argument>
+      <argument>%configuration_converter.serializer_group.entities_dir%</argument>
       <argument>%api_platform.resource_class_directories%</argument>
       <tag name="console.command"/>
     </service>

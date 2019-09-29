@@ -4,14 +4,24 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
   <services>
-    <service abstract="true" id="configuration_converter.writers.api_platform_writer" class="ConfigurationConverter\Writers\ApiPlatformWriter" public="false">
+    <service abstract="true" id="configuration_converter.writers.api_platform.writer" class="ConfigurationConverter\Writers\ApiPlatformWriter" public="false">
       <argument type="service" id="event_dispatcher"/>
     </service>
 
-    <service parent="configuration_converter.writers.api_platform_writer" id="configuration_converter.writers.api_platform_cli_writer" class="ConfigurationConverter\Writers\ApiPlatformCliWriter" public="false">
+    <service abstract="true" id="configuration_converter.writers.serializer_group.writer" class="ConfigurationConverter\Writers\SerializerGroupWriter" public="false">
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+
+    <service parent="configuration_converter.writers.api_platform.writer" id="configuration_converter.writers.api_platform.cli_writer" class="ConfigurationConverter\Writers\ApiPlatformCliWriter" public="false">
       <tag name="configuration_converter.writer"/>
     </service>
-    <service parent="configuration_converter.writers.api_platform_writer" id="configuration_converter.writers.api_platform_file_writer" class="ConfigurationConverter\Writers\ApiPlatformFileWriter" public="false">
+    <service parent="configuration_converter.writers.api_platform.writer" id="configuration_converter.writers.api_platform.file_writer" class="ConfigurationConverter\Writers\ApiPlatformFileWriter" public="false">
+      <tag name="configuration_converter.writer"/>
+    </service>
+    <service parent="configuration_converter.writers.serializer_group.writer" id="configuration_converter.writers.serializer_group.cli_writer" class="ConfigurationConverter\Writers\SerializerGroupCliWriter" public="false">
+      <tag name="configuration_converter.writer"/>
+    </service>
+    <service parent="configuration_converter.writers.serializer_group.writer" id="configuration_converter.writers.serializer_group.file_writer" class="ConfigurationConverter\Writers\SerializerGroupFileWriter" public="false">
       <tag name="configuration_converter.writer"/>
     </service>
   </services>

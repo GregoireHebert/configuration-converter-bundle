@@ -10,7 +10,7 @@ use ApiPlatform\Core\Serializer\Filter\GroupFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Symfony\Component\HttpFoundation\Request;
 
-class ApiFilterYmlEncoder extends AbstractApiPlatformFilterEncoder implements ConfigurationEncoderInterface
+class ApiFilterYamlEncoder extends AbstractApiPlatformFilterEncoder implements ConfigurationEncoderInterface
 {
     public function encode(string $resourceClass): array
     {

@@ -4,52 +4,33 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Test\Command;
 
-use ConfigurationConverter\Command\ConverterCommand;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use ConfigurationConverter\Converters\ConfigurationConverter;
 use Symfony\Component\Config\Util\XmlUtils;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ApiPlatformXmlConverterTest extends KernelTestCase
+class ApiPlatformXmlConverterTest extends AbstractConverterTest
 {
-    /**
-     * @var Application
-     */
-    protected static $application;
-    /**
-     * @var Command
-     */
-    protected static $command;
-    /**
-     * @var CommandTester
-     */
-    protected static $commandTester;
-
-    protected function setUp(): void
-    {
-        self::bootKernel();
-        self::$application = new Application(self::$kernel);
-    }
-
-    public function testCommandLoaded(): void
-    {
-        self::$command = self::$application->find('configuration:convert');
-        self::$commandTester = new CommandTester(self::$command);
-
-        $this->assertInstanceOf(ConverterCommand::class, self::$command);
-    }
-
     public function testCommandWithGoodConfigurationsArgument(): void
     {
         self::$commandTester->execute(
             [
                 'command' => self::$command->getName(),
-                '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
-                '--configurations' => [ConverterCommand::CONVERT_API_PLATFORM],
+                '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
+                '--configurations' => [ConfigurationConverter::CONVERT_API_PLATFORM],
             ]
         );
+
+        $apiPlatformOutput = self::$kernel->getProjectDir().self::API_PLATFORM_OUTPUT;
+        $output = self::$kernel->getProjectDir().self::SERIALIZER_GROUP_OUTPUT;
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($output);
+        $filesystem->remove($apiPlatformOutput);
+
+        $this->assertFileNotExists($apiPlatformOutput.'Book.xml');
+        $this->assertFileNotExists($apiPlatformOutput.'Book.services.xml');
+        $this->assertFileNotExists($output.'Book.xml');
+        $this->assertFileNotExists($output.'Book.services.xml');
 
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[NOTE] Converting resource:', $output);
@@ -60,7 +41,7 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
         self::$commandTester->execute(
             [
                 'command' => self::$command->getName(),
-                '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
+                '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
                 '--configurations' => ['bad'],
             ]
         );
@@ -72,22 +53,22 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
     public function testCommandWithoutOutputArgument(): void
     {
         self::$commandTester->execute(
-            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book']
+            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book']
         );
 
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[NOTE] Converting resource:', $output);
-        $this->assertStringContainsString('ConfigurationConverter\Test\Fixtures\Entity\Book', $output);
+        $this->assertStringContainsString('ConfigurationConverter\Test\Fixtures\App\src\Entity\Book', $output);
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
 
         self::$commandTester->execute(
-            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Tag']
+            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Tag']
         );
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
 
         self::$commandTester->execute(
-            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Dummy']
+            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Dummy']
         );
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
@@ -97,7 +78,7 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
     {
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
+            '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
             '--format' => 'badformat',
         ]);
 
@@ -109,9 +90,21 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
     {
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
+            '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
             '--format' => 'xml',
         ]);
+
+        $apiPlatformOutput = self::$kernel->getProjectDir().self::API_PLATFORM_OUTPUT;
+        $output = self::$kernel->getProjectDir().self::SERIALIZER_GROUP_OUTPUT;
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($output);
+        $filesystem->remove($apiPlatformOutput);
+
+        $this->assertFileNotExists($apiPlatformOutput.'Book.xml');
+        $this->assertFileNotExists($apiPlatformOutput.'Book.services.xml');
+        $this->assertFileNotExists($output.'Book.xml');
+        $this->assertFileNotExists($output.'Book.services.xml');
 
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
@@ -125,8 +118,8 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
 
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
-            '--output' => self::$kernel->getProjectDir().'/../forbidenDir',
+            '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
+            '--api-platform-output' => self::$kernel->getProjectDir().'/../forbidenDir',
         ]);
 
         $output = self::$commandTester->getDisplay();
@@ -134,8 +127,8 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
 
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
-            '--output' => self::$kernel->getProjectDir().'/../forbidenDir/cannotcreatedir',
+            '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
+            '--api-platform-output' => self::$kernel->getProjectDir().'/../forbidenDir/cannotcreatedir',
         ]);
 
         $output = self::$commandTester->getDisplay();
@@ -144,15 +137,19 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
 
     public function testXmlNonSpecifiedResourcesOutput(): void
     {
-        $output = self::$kernel->getProjectDir().'/config/packages/api-platform/';
-        $expected = self::$kernel->getProjectDir().'/config/packages/expected/';
+        $serializer_output = self::$kernel->getProjectDir().self::SERIALIZER_GROUP_OUTPUT;
+        $serializer_expected = self::$kernel->getProjectDir().self::SERIALIZER_GROUP_EXPECTED;
+        $output = self::$kernel->getProjectDir().self::API_PLATFORM_OUTPUT;
+        $expected = self::$kernel->getProjectDir().self::API_PLATFORM_EXPECTED;
 
         $filesystem = new Filesystem();
         $filesystem->remove($output);
+        $filesystem->remove($serializer_output);
 
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            '--output' => $output,
+            '--api-platform-output' => $output,
+            '--serializer-groups-output' => $serializer_output,
         ]);
 
         $resourceSchema = self::$kernel->getProjectDir().'/../../../vendor/api-platform/core/src/Metadata/schema/metadata.xsd';
@@ -167,6 +164,7 @@ class ApiPlatformXmlConverterTest extends KernelTestCase
         $this->assertFileNotExists($output.'Dummy.services.xml');
         $this->assertFileNotExists($output.'NotAResource.xml');
 
+        $this->assertFileEquals($serializer_expected.'Book.xml', $serializer_output.'Book.xml');
         $this->assertFileEquals($expected.'Book.xml', $output.'Book.xml');
         $this->assertFileEquals($expected.'Book.services.xml', $output.'Book.services.xml');
         $this->assertFileEquals($expected.'Tag.xml', $output.'Tag.xml');

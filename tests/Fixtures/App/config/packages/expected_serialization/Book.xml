@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<serializer xmlns="http://symfony.com/schema/dic/serializer-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/serializer-mapping https://symfony.com/schema/dic/serializer-mapping/serializer-mapping-1.0.xsd">
+  <class name="ConfigurationConverter\Test\Fixtures\App\src\Entity\Book">
+    <attribute name="name">
+      <group>read</group>
+      <group>write</group>
+      <group>query</group>
+    </attribute>
+    <attribute name="author">
+      <group>read</group>
+      <group>mutation</group>
+    </attribute>
+  </class>
+</serializer>

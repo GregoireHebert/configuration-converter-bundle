@@ -25,9 +25,24 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('api_platform_default_export_dir')
-                    ->info('directory path where to export the API Platform configuration')
+                    ->info('Directory path where to export the API Platform configuration')
                     ->defaultValue('%kernel.project_dir%/config/packages/api-platform/')
                 ->end()
+                ->arrayNode('serializer_groups')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('default_export_dir')
+                            ->info('Directory path where to export the Serializer Groups configuration')
+                            ->defaultValue('%kernel.project_dir%/config/packages/serialization/')
+                        ->end()
+                        ->arrayNode('entities_dir')
+                            ->prototype('scalar')->end()
+                            ->defaultValue(['%kernel.project_dir%/src/Entity/'])
+                            ->info('Directory path where to look up for the Serializer Groups annotations')
+                        ->end()
+                    ->end()
+                ->end()
+
             ->end();
 
         return $treeBuilder;

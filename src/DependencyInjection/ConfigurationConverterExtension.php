@@ -20,6 +20,8 @@ final class ConfigurationConverterExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('configuration_converter.api_platform_default_export_dir', $config['api_platform_default_export_dir']);
+        $container->setParameter('configuration_converter.serializer_group.default_export_dir', $config['serializer_groups']['default_export_dir']);
+        $container->setParameter('configuration_converter.serializer_group.entities_dir', $config['serializer_groups']['entities_dir']);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('command.xml');

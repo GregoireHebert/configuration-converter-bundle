@@ -10,7 +10,7 @@ use ApiPlatform\Core\Metadata\Property\PropertyMetadata;
 use ApiPlatform\Core\Metadata\Property\SubresourceMetadata;
 use ApiPlatform\Core\Metadata\Resource\Factory\ResourceMetadataFactoryInterface;
 
-class ApiResourceYmlEncoder implements ConfigurationEncoderInterface
+class ApiResourceYamlEncoder implements ConfigurationEncoderInterface
 {
     private $resourceMetadataFactory;
     private $propertyMetadataFactory;

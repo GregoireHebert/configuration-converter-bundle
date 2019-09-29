@@ -8,7 +8,7 @@ use Symfony\Component\Serializer\Encoder\YamlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-class ApiFilterServiceYmlSerializer implements ConfigurationSerializerInterface
+class ApiFilterServiceYamlSerializer implements ConfigurationSerializerInterface
 {
     public function serialize(array $data): string
     {

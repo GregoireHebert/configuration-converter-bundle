@@ -1,4 +1,4 @@
-ConfigurationConverter\Test\Fixtures\Entity\Book:
+ConfigurationConverter\Test\Fixtures\App\src\Entity\Book:
     shortName: customShortname
     description: 'my description'
     iri: 'http://schema.org/Book'
@@ -74,7 +74,7 @@ ConfigurationConverter\Test\Fixtures\Entity\Book:
         author:
             readable: true
             subresource:
-                resourceClass: ConfigurationConverter\Test\Fixtures\Entity\Dummy
+                resourceClass: ConfigurationConverter\Test\Fixtures\App\src\Entity\Dummy
                 maxDepth: 1
         scribus:
             attributes:
