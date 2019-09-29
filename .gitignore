@@ -4,7 +4,7 @@
 /tests/Fixtures/App/cache/*
 /tests/Fixtures/App/logs/*
 /tests/Fixtures/App/config/packages/api-platform/*
-/tests/Fixtures/App/config/packages/expected_serialization/*
+/tests/Fixtures/App/config/packages/serialization/*
 /dist/
 composer.lock
 /build/
