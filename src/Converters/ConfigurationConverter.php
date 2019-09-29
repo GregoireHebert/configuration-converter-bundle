@@ -9,7 +9,7 @@ use ConfigurationConverter\Writers\WriterInterface;
 final class ConfigurationConverter
 {
     public const CONVERT_API_PLATFORM = 'api_platform';
-    public const CONVERT_GROUPS = 'serializer_group';
+    public const CONVERT_GROUPS = 'serializer_groups';
 
     /**
      * @var ConverterInterface[]
