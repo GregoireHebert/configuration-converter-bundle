@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <resources xmlns="https://api-platform.com/schema/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://api-platform.com/schema/metadata https://api-platform.com/schema/metadata/metadata-2.0.xsd">
-  <resource class="ConfigurationConverter\Test\Fixtures\Entity\Book" shortName="customShortname" description="my description" iri="http://schema.org/Book">
+  <resource class="ConfigurationConverter\Test\Fixtures\App\src\Entity\Book" shortName="customShortname" description="my description" iri="http://schema.org/Book">
     <attribute name="normalization_context">
       <attribute name="groups">
         <attribute>read</attribute>
@@ -84,7 +84,7 @@
     <property name="id" description="identifiant unique" iri="http://schema.org/id" readable="true" writable="true" readableLink="true" writableLink="true" required="true" identifier="true"/>
     <property name="name" readable="true" writable="true" required="false"/>
     <property name="author" readable="true" writable="false" readableLink="false" writableLink="false" required="false">
-      <subresource resourceClass="ConfigurationConverter\Test\Fixtures\Entity\Dummy" maxDepth="1"/>
+      <subresource resourceClass="ConfigurationConverter\Test\Fixtures\App\src\Entity\Dummy" maxDepth="1"/>
     </property>
     <property name="scribus" readable="false" writable="false" required="false">
       <attribute>

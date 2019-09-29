@@ -1,4 +1,4 @@
-ConfigurationConverter\Test\Fixtures\Entity\Book:
+ConfigurationConverter\Test\Fixtures\App\src\Entity\Book:
     attributes:
         name:
             groups: [read, write, query]

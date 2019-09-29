@@ -7,3 +7,4 @@
 /tests/Fixtures/App/config/packages/expected_serialization/*
 /dist/
 composer.lock
+/build/

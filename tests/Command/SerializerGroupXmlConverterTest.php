@@ -7,7 +7,7 @@ namespace ConfigurationConverter\Test\Command;
 use ConfigurationConverter\Converters\ConfigurationConverter;
 use Symfony\Component\Filesystem\Filesystem;
 
-class SerializerGroupYamlConverterTest extends AbstractConverterTest
+class SerializerGroupXmlConverterTest extends AbstractConverterTest
 {
     public function testCommandWithGoodConfigurationsArgument(): void
     {
@@ -16,7 +16,7 @@ class SerializerGroupYamlConverterTest extends AbstractConverterTest
                 'command' => self::$command->getName(),
                 '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
                 '--configurations' => [ConfigurationConverter::CONVERT_GROUPS],
-                '--format' => 'yaml',
+                '--format' => 'xml',
                 '-vvv' => '',
             ]
         );
@@ -40,18 +40,19 @@ class SerializerGroupYamlConverterTest extends AbstractConverterTest
                 'command' => self::$command->getName(),
                 '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
                 '--configurations' => [ConfigurationConverter::CONVERT_GROUPS],
-                '--format' => 'yml',
+                '--format' => 'xml',
                 '--api-platform-output' => $apiPlatformOutput,
                 '--serializer-groups-output' => $output,
                 '-vvv' => '',
             ]
         );
 
-        $this->assertFileNotExists($apiPlatformOutput.'Book.yml');
-        $this->assertFileNotExists($apiPlatformOutput.'Book.services.yml');
+        $this->assertFileNotExists($apiPlatformOutput.'Book.xml');
+        $this->assertFileNotExists($apiPlatformOutput.'Book.services.xml');
 
-        $this->assertFileExists($output.'Book.yml');
-        $this->assertFileNotExists($output.'Book.services.yml');
-        $this->assertFileEquals($expected.'Book.yml', $output.'Book.yml');
+        $this->assertFileExists($output.'Book.xml');
+        $this->assertFileNotExists($output.'Book.services.xml');
+
+        $this->assertFileEquals($expected.'Book.xml', $output.'Book.xml');
     }
 }

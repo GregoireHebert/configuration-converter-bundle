@@ -4,49 +4,17 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Test\Command;
 
-use ConfigurationConverter\Command\ConverterCommand;
 use ConfigurationConverter\Converters\ConfigurationConverter;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ApiPlatformYmlConverterTest extends KernelTestCase
+class ApiPlatformYmlConverterTest extends AbstractConverterTest
 {
-    /**
-     * @var Application
-     */
-    protected static $application;
-    /**
-     * @var Command
-     */
-    protected static $command;
-    /**
-     * @var CommandTester
-     */
-    protected static $commandTester;
-
-    protected function setUp(): void
-    {
-        self::bootKernel();
-        self::$application = new Application(self::$kernel);
-    }
-
-    public function testCommandLoaded(): void
-    {
-        self::$command = self::$application->find('configuration:convert');
-        self::$commandTester = new CommandTester(self::$command);
-
-        $this->assertInstanceOf(ConverterCommand::class, self::$command);
-    }
-
     public function testCommandWithGoodConfigurationsArgument(): void
     {
         self::$commandTester->execute(
             [
                 'command' => self::$command->getName(),
-                '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book',
+                '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book',
                 '--configurations' => [ConfigurationConverter::CONVERT_API_PLATFORM],
                 '--format' => 'yml',
                 '-vvv' => '',
@@ -60,22 +28,22 @@ class ApiPlatformYmlConverterTest extends KernelTestCase
     public function testCommandWithoutOutputArgument(): void
     {
         self::$commandTester->execute(
-            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Book', '--format' => 'yml']
+            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Book', '--format' => 'yml']
         );
 
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[NOTE] Converting resource:', $output);
-        $this->assertStringContainsString('ConfigurationConverter\Test\Fixtures\Entity\Book', $output);
+        $this->assertStringContainsString('ConfigurationConverter\Test\Fixtures\App\src\Entity\Book', $output);
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
 
         self::$commandTester->execute(
-            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Tag', '--format' => 'yml']
+            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Tag', '--format' => 'yml']
         );
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
 
         self::$commandTester->execute(
-            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\Entity\Dummy', '--format' => 'yml']
+            ['command' => self::$command->getName(), '--resource' => 'ConfigurationConverter\Test\Fixtures\App\src\Entity\Dummy', '--format' => 'yml']
         );
         $output = self::$commandTester->getDisplay();
         $this->assertStringContainsString('[OK] Check and paste this configuration:', $output);
@@ -83,21 +51,26 @@ class ApiPlatformYmlConverterTest extends KernelTestCase
 
     public function testYmlNonSpecifiedResourcesOutput(): void
     {
-        $output = self::$kernel->getProjectDir().'/config/packages/api-platform/';
-        $expected = self::$kernel->getProjectDir().'/config/packages/expected/';
+        $serializer_output = self::$kernel->getProjectDir().self::SERIALIZER_GROUP_OUTPUT;
+        $serializer_expected = self::$kernel->getProjectDir().self::SERIALIZER_GROUP_EXPECTED;
+        $output = self::$kernel->getProjectDir().self::API_PLATFORM_OUTPUT;
+        $expected = self::$kernel->getProjectDir().self::API_PLATFORM_EXPECTED;
 
         $filesystem = new Filesystem();
         $filesystem->remove($output);
+        $filesystem->remove($serializer_output);
 
         self::$commandTester->execute([
             'command' => self::$command->getName(),
-            '--output' => $output,
+            '--api-platform-output' => $output,
+            '--serializer-groups-output' => $serializer_output,
             '--format' => 'yml',
         ]);
 
         $this->assertFileNotExists($output.'Dummy.services.yml');
         $this->assertFileNotExists($output.'NotAResource.yml');
 
+        $this->assertFileEquals($serializer_expected.'Book.yml', $serializer_output.'Book.yml');
         $this->assertFileEquals($expected.'Book.yml', $output.'Book.yml');
         $this->assertFileEquals($expected.'Book.services.yml', $output.'Book.services.yml');
         $this->assertFileEquals($expected.'Tag.yml', $output.'Tag.yml');

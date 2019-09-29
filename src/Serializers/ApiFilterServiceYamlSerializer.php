@@ -8,14 +8,16 @@ use Symfony\Component\Serializer\Encoder\YamlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-class ApiResourceYmlSerializer implements ConfigurationSerializerInterface
+class ApiFilterServiceYamlSerializer implements ConfigurationSerializerInterface
 {
     public function serialize(array $data): string
     {
         $serializer = new Serializer([new ObjectNormalizer()], [new YamlEncoder()]);
 
-        return (string) $serializer->encode(
-            $data,
+        return  (string) $serializer->encode(
+            [
+                'services' => $data,
+            ],
             'yml',
             [
                 'yaml_inline' => 6,

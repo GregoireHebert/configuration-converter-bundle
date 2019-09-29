@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Converters;
 
-use ConfigurationConverter\Encoders\ApiFilterYmlEncoder;
-use ConfigurationConverter\Encoders\ApiResourceYmlEncoder;
+use ConfigurationConverter\Encoders\ApiFilterYamlEncoder;
+use ConfigurationConverter\Encoders\ApiResourceYamlEncoder;
 use ConfigurationConverter\Events\ApiFilterConvertedEvent;
 use ConfigurationConverter\Events\ApiResourceConvertedEvent;
-use ConfigurationConverter\Serializers\ApiFilterServiceYmlSerializer;
-use ConfigurationConverter\Serializers\ApiResourceYmlSerializer;
+use ConfigurationConverter\Serializers\ApiFilterServiceYamlSerializer;
+use ConfigurationConverter\Serializers\ApiResourceYamlSerializer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-final class ApiPlatformYmlConverter implements ConverterInterface
+final class ApiPlatformYamlConverter implements ConverterInterface
 {
     private $apiResourceYmlSerializer;
     private $apiFilterYmlSerializer;
@@ -21,10 +21,10 @@ final class ApiPlatformYmlConverter implements ConverterInterface
     private $eventDispatcher;
 
     public function __construct(
-        ApiResourceYmlSerializer $apiResourceYmlSerializer,
-        ApiFilterServiceYmlSerializer $apiFilterYmlSerializer,
-        ApiResourceYmlEncoder $apiResourceYmlEncoder,
-        ApiFilterYmlEncoder $apiFilterYmlEncoder,
+        ApiResourceYamlSerializer $apiResourceYmlSerializer,
+        ApiFilterServiceYamlSerializer $apiFilterYmlSerializer,
+        ApiResourceYamlEncoder $apiResourceYmlEncoder,
+        ApiFilterYamlEncoder $apiFilterYmlEncoder,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->apiResourceYmlSerializer = $apiResourceYmlSerializer;

@@ -15,17 +15,18 @@
       <argument type="service" id="api_platform.metadata.property.name_collection_factory.property_info"/>
     </service>
 
-    <service id="configuration_converter.encoders.api_platform.api_filter_yml_encoder" class="ConfigurationConverter\Encoders\ApiFilterYmlEncoder" public="false">
+    <service id="configuration_converter.encoders.api_platform.api_filter_yaml_encoder" class="ConfigurationConverter\Encoders\ApiFilterYamlEncoder" public="false">
       <argument type="service" id="api_platform.metadata.resource.filter_metadata_factory.annotation"/>
       <argument type="service" id="api_platform.filter_locator"/>
     </service>
 
-    <service id="configuration_converter.encoders.api_platform.api_resource_yml_encoder" class="ConfigurationConverter\Encoders\ApiResourceYmlEncoder" public="false">
+    <service id="configuration_converter.encoders.api_platform.api_resource_yaml_encoder" class="ConfigurationConverter\Encoders\ApiResourceYamlEncoder" public="false">
       <argument type="service" id="api_platform.metadata.resource.metadata_factory.annotation"/>
       <argument type="service" id="api_platform.metadata.property.metadata_factory.annotation"/>
       <argument type="service" id="api_platform.metadata.property.name_collection_factory.property_info"/>
     </service>
 
     <service id="configuration_converter.encoders.serializer_group.yaml_encoder" class="ConfigurationConverter\Encoders\SerializerGroupYamlEncoder" public="false" />
+    <service id="configuration_converter.encoders.serializer_group.xml_encoder" class="ConfigurationConverter\Encoders\SerializerGroupXmlEncoder" public="false" />
   </services>
 </container>

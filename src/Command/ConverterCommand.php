@@ -54,7 +54,8 @@ class ConverterCommand extends Command
             ->setDescription('Convert your configuration from annotation to xml or yaml')
             ->addOption('resource', 'r', InputOption::VALUE_REQUIRED, 'ApiResource FQCN. (App\\Entity\\Book)')
             ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'Format to convert to. xml(default) or yaml', 'xml')
-            ->addOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Output the result in the default directory (config/packages/api-platform) or in the specified one.', '')
+            ->addOption('api-platform-output', 'apo', InputOption::VALUE_OPTIONAL, 'Output the API-Platform result in the default directory (config/packages/api-platform) or in the specified one.', '')
+            ->addOption('serializer-groups-output', 'sgo', InputOption::VALUE_OPTIONAL, 'Output the Serializer Groups result in the default directory (config/packages/serialization) or in the specified one.', '')
             ->addOption('configurations', 'c', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Target the configuration type to be converted', [ConfigurationConverter::CONVERT_API_PLATFORM, ConfigurationConverter::CONVERT_GROUPS])
         ;
     }
@@ -65,8 +66,8 @@ class ConverterCommand extends Command
 
         $resource = $input->getOption('resource');
         $format = $input->getOption('format');
-        $apiPlatformOutputDirectory = $input->getOption('output') ?? $this->defaultApiPlatformExportDir;
-        $serializerGroupOutputDirectory = $input->getOption('output') ?? $this->defaultSerializerGroupExportDir;
+        $apiPlatformOutputDirectory = $input->getOption('api-platform-output') ?? $this->defaultApiPlatformExportDir;
+        $serializerGroupOutputDirectory = $input->getOption('serializer-groups-output') ?? $this->defaultSerializerGroupExportDir;
         $configurationList = (array) $input->getOption('configurations');
 
         if (!\is_string($format) || !\is_string($apiPlatformOutputDirectory)) {
@@ -95,18 +96,42 @@ class ConverterCommand extends Command
     {
         if (!\is_string($resource) || '' === $resource) {
             foreach (ReflectionClassRecursiveIterator::getReflectionClassesFromDirectories($inputDirectories) as $resourceClass => $reflectionClass) {
-                if (null !== $this->reader->getClassAnnotation($reflectionClass, $annotation)) {
-                    $this->io->note(sprintf('Converting resource: %s', $resourceClass));
-                    foreach ($this->configurationConverter->convert($resourceClass, $format, $type, $outputDirectory) as $result) {
-                        $this->io->success($result);
-                    }
+                if (!$this->hasAnnotation($reflectionClass, $annotation)) {
+                    $this->io->note(sprintf('Cannot Convert resource: %s', $resourceClass));
+                    continue;
+                }
+
+                $this->io->note(sprintf('Converting resource: %s', $resourceClass));
+                foreach ($this->configurationConverter->convert($resourceClass, $format, $type, $outputDirectory) as $result) {
+                    $this->io->success($result);
                 }
             }
         } else {
+            if (!$this->hasAnnotation(new \ReflectionClass($resource), $annotation)) {
+                $this->io->note('Nothing to convert.');
+
+                return;
+            }
+
             $this->io->note(sprintf('Converting resource: %s', $resource));
             foreach ($this->configurationConverter->convert($resource, $format, $type, $outputDirectory) as $result) {
                 $this->io->success($result);
             }
         }
+    }
+
+    private function hasAnnotation(\ReflectionClass $reflectionClass, string $annotation): bool
+    {
+        if (null !== $this->reader->getClassAnnotation($reflectionClass, $annotation)) {
+            return true;
+        }
+
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if (null !== $this->reader->getPropertyAnnotation($reflectionProperty, $annotation)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

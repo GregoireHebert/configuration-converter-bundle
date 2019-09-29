@@ -16,6 +16,16 @@ class SerializerGroupCliWriter extends SerializerGroupWriter
 
         foreach ($this->groups as $serializerGroupConfigurationContent) {
             $result .= <<<TXT
+Configure Symfony to use your yaml groups
+
+```
+# config/packages/framework.yaml
+framework:
+    serializer:
+        mapping:
+            paths: ['%kernel.project_dir%/config/packages/serialization']
+```
+
 Check and paste this configuration:
 # config/packages/serialization/$shortName.$format
 

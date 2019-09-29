@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ConfigurationConverter\Test\Fixtures\Entity;
+namespace ConfigurationConverter\Test\Fixtures\App\src\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;

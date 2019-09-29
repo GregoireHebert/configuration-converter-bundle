@@ -4,20 +4,8 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Encoders;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
-
-class SerializerGroupYamlEncoder implements ConfigurationEncoderInterface
+final class SerializerGroupXmlEncoder extends SerializerGroupYamlEncoder
 {
-    protected $resource;
-    protected $classMetadataFactory;
-
-    public function __construct()
-    {
-        $this->classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
-    }
-
     public function encode(string $resourceClass): array
     {
         $this->resource = [];
@@ -27,7 +15,10 @@ class SerializerGroupYamlEncoder implements ConfigurationEncoderInterface
             return [];
         }
 
-        return [$resourceClass => ['attributes' => $this->resource]];
+        return [
+            '@name' => $resourceClass,
+            'attribute' => $this->resource,
+        ];
     }
 
     protected function transformGroups(string $resourceClass): void
@@ -39,7 +30,10 @@ class SerializerGroupYamlEncoder implements ConfigurationEncoderInterface
                 continue;
             }
 
-            $this->resource[$attribute->getName()]['groups'] = $groups;
+            $this->resource[] = [
+                '@name' => $attribute->getName(),
+                'group' => $groups,
+            ];
         }
     }
 }
