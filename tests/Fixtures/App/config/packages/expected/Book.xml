@@ -82,11 +82,11 @@
       <collectionOperation name="post"/>
     </collectionOperations>
     <property name="id" description="identifiant unique" iri="http://schema.org/id" readable="true" writable="true" readableLink="true" writableLink="true" required="true" identifier="true"/>
-    <property name="name" readable="true" writable="true" required="false"/>
-    <property name="author" readable="true" writable="false" readableLink="false" writableLink="false" required="false">
+    <property name="name" readable="true" writable="true"/>
+    <property name="author" readable="true" writable="false" readableLink="false" writableLink="false">
       <subresource resourceClass="ConfigurationConverter\Test\Fixtures\App\src\Entity\Dummy" maxDepth="1"/>
     </property>
-    <property name="scribus" readable="false" writable="false" required="false">
+    <property name="scribus" readable="false" writable="false">
       <attribute>
         <attribute name="deprecation_reason">Use the author property instead</attribute>
       </attribute>

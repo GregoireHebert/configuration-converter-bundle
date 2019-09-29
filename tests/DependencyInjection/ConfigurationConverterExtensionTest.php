@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Test\DependencyInjection;
 
+use ConfigurationConverter\Command\ConverterCommand;
 use ConfigurationConverter\DependencyInjection\ConfigurationConverterExtension;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
-class ConfigurationConverterExtensionTest extends TestCase
+class ConfigurationConverterExtensionTest extends KernelTestCase
 {
     const DEFAULT_CONFIG = ['api_platform_configuration_converter' => [
         'api_platform_default_export_dir' => '%kernel.project_dir%/config/packages/api-platform/',
@@ -79,6 +83,12 @@ class ConfigurationConverterExtensionTest extends TestCase
         $containerBuilderProphecy->setDefinition('configuration_converter.writers.serializer_group.writer', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilderProphecy->setDefinition('configuration_converter.writers.serializer_group.cli_writer', Argument::type(Definition::class))->shouldBeCalled();
         $containerBuilderProphecy->setDefinition('configuration_converter.writers.serializer_group.file_writer', Argument::type(Definition::class))->shouldBeCalled();
+
+        // irrelevant, but to prevent errors
+        if (method_exists(ContainerBuilder::class, 'removeBindings')) {
+            $containerBuilderProphecy->removeBindings(Argument::type('string'))->will(function () {});
+        }
+
         $containerBuilder = $containerBuilderProphecy->reveal();
 
         $this->extension->load(self::DEFAULT_CONFIG, $containerBuilder);

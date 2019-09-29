@@ -12,7 +12,7 @@
         <attribute name="method">POST</attribute>
       </collectionOperation>
     </collectionOperations>
-    <property name="id" description="var string." readable="true" writable="true" required="false" identifier="true"/>
-    <property name="name" description="var string." readable="true" writable="true" required="false"/>
+    <property name="id" description="var string." readable="true" writable="true" identifier="true"/>
+    <property name="name" description="var string." readable="true" writable="true"/>
   </resource>
 </resources>
