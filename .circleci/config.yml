@@ -107,13 +107,13 @@ jobs:
     working_directory: ~/GregoireHebert/configuration-converter-bundle
     steps:
       - checkout
-      - *restore-composer-cache
+#      - *restore-composer-cache
       - *disable-xdebug-php-extension
       - *disable-php-memory-limit
       - *update-composer
       - *update-project-dependencies
-      - *save-composer-cache-by-revision
-      - *save-composer-cache-by-branch
+#      - *save-composer-cache-by-revision
+#      - *save-composer-cache-by-branch
       - *clear-test-app-cache
       - run:
           name: Run PHPUnit tests
