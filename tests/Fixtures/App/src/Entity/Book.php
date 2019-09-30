@@ -13,6 +13,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Serializer\Filter\GroupFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ConfigurationConverter\Test\Fixtures\App\src\Filter\RegexpFilter;
 
 /**
  * @ApiResource(
@@ -45,6 +46,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiFilter(PropertyFilter::class, arguments={"parameterName"="propertyfilterparametername", "overrideDefaultProperties"=false, "whitelist"={"name", "author"}})
  * @ApiFilter(SearchFilter::class, properties={"id"="exact", "price"="exact", "description"="partial"})
  * @ApiFilter(OrderFilter::class, properties={"validFrom"={ "nulls_comparison"=OrderFilter::NULLS_SMALLEST, "default_direction"="DESC" }})
+ * @ApiFilter(RegexpFilter::class, properties={"search": {"name", "author"}})
  */
 class Book
 {

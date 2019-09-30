@@ -105,7 +105,7 @@ class ApiFilterYamlEncoder extends AbstractApiPlatformFilterEncoder implements C
             }
 
             $this->filterServicesDefinition[$filterId] = [
-                'parent' => self::FILTERS_SERVICES_ID[\get_class($filter)],
+                'parent' => self::FILTERS_SERVICES_ID[$class = \get_class($filter)] ?? $class,
                 'autowire' => false,
                 'autoconfigure' => false,
                 'public' => false,
