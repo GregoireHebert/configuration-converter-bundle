@@ -54,6 +54,7 @@ ConfigurationConverter\Test\Fixtures\App\src\Entity\Book:
                     - customShortname.PropertyFilter
                     - customShortname.SearchFilter
                     - customShortname.OrderFilter
+                    - customShortname.RegexpFilter
         custom:
             method: GET
             path: /MyRoute

@@ -77,6 +77,11 @@ commands:
       - run:
           name: Update project dependencies
           command: composer update --prefer-dist --no-progress --no-suggest --ansi
+  update-project-dependencies-lowest:
+    steps:
+      - run:
+          name: Update project dependencies
+          command: composer update --prefer-dist --no-progress --no-suggest --ansi --prefer-lowest
 
 executors:
   php:
@@ -126,6 +131,21 @@ jobs:
           name: Run PHPStan
           command: vendor/bin/phpstan analyse --ansi
       - save-phpstan-cache
+
+  phpunit-lowest:
+    executor: php
+    working_directory: ~/GregoireHebert/configuration-converter-bundle
+    steps:
+      - checkout
+      - disable-xdebug-php-extension
+      - disable-php-memory-limit
+      - restore-composer-cache
+      - update-project-dependencies-lowest
+      - save-composer-cache
+      - clear-test-app-cache
+      - run:
+          name: Run PHPUnit tests
+          command: vendor/bin/phpunit
 
   phpunit-coverage:
     executor: php
@@ -193,4 +213,5 @@ workflows:
       - phpstan
   coverage:
     jobs:
+      - phpunit-lowest
       - phpunit-coverage

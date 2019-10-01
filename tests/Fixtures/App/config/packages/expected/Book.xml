@@ -73,6 +73,7 @@
           <attribute>customShortname.PropertyFilter</attribute>
           <attribute>customShortname.SearchFilter</attribute>
           <attribute>customShortname.OrderFilter</attribute>
+          <attribute>customShortname.RegexpFilter</attribute>
         </attribute>
       </collectionOperation>
       <collectionOperation name="custom">

@@ -70,6 +70,7 @@ parameters:
     container.dumper.inline_class_loader: true
 
 services:
+    ConfigurationConverter\Test\Fixtures\App\src\Filter\RegexpFilter: ~
     tag.name_filter:
         parent: 'api_platform.doctrine.orm.search_filter'
         arguments: [ { name: 'ipartial' } ]

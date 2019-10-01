@@ -48,3 +48,15 @@ services:
                     default_direction: DESC
         tags:
             - api_platform.filter
+    customShortname.RegexpFilter:
+        parent: ConfigurationConverter\Test\Fixtures\App\src\Filter\RegexpFilter
+        autowire: false
+        autoconfigure: false
+        public: false
+        arguments:
+            search:
+                argument:
+                    - name
+                    - author
+        tags:
+            - api_platform.filter

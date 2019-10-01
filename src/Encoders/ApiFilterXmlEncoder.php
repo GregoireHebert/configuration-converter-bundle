@@ -110,7 +110,7 @@ final class ApiFilterXmlEncoder extends AbstractApiPlatformFilterEncoder impleme
                 '@autowire' => 'false',
                 '@autoconfigure' => 'false',
                 '@public' => 'false',
-                '@parent' => self::FILTERS_SERVICES_ID[\get_class($filter)],
+                '@parent' => self::FILTERS_SERVICES_ID[$class = \get_class($filter)] ?? $class,
                 'argument' => $arguments,
                 'tag' => [
                     '@name' => 'api_platform.filter',

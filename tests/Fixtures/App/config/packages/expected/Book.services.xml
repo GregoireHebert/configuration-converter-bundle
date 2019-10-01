@@ -31,5 +31,12 @@
       </argument>
       <tag name="api_platform.filter"/>
     </service>
+    <service id="customShortname.RegexpFilter" autowire="false" autoconfigure="false" public="false" parent="ConfigurationConverter\Test\Fixtures\App\src\Filter\RegexpFilter">
+      <argument key="search">
+        <argument>name</argument>
+        <argument>author</argument>
+      </argument>
+      <tag name="api_platform.filter"/>
+    </service>
   </services>
 </container>
