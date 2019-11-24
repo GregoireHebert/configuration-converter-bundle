@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/GregoireHebert/configuration-converter-bundle.svg?style=shield)](https://circleci.com/gh/GregoireHebert/configuration-converter-bundle)
 [![Coverage Status](https://coveralls.io/repos/github/GregoireHebert/configuration-converter-bundle/badge.svg)](https://coveralls.io/github/GregoireHebert/configuration-converter-bundle)
 
-Do not worry about you configuration at first.
+Do not worry about your configuration at first.
 
 When you start working on your project, the documentation (because it's easy to make a POC with) shows you how to configure your resources with annotations.
 And it's usually a good practice to use annotations.
