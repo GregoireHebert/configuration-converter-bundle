@@ -37,6 +37,8 @@ class RouteFileConverterCommand extends Command
     private SymfonyStyle $io;
     private string $projectDir;
     private DelegatingLoader $routingLoader;
+
+    /** @var RoutingConverterInterface[] */
     private array $converters = [];
 
     public function __construct(string $projectDir, iterable $converters, DelegatingLoader $routingLoader)
@@ -87,17 +89,17 @@ class RouteFileConverterCommand extends Command
 
         $outputFile = $pathinfo['dirname'].'/'.$pathinfo['filename'].'.'.$outputExt;
 
-        switch ($outputFormat) {
-            case 'fluent':
-                $fileContent = $this->convertToFluent($collection);
+        $converter = null;
+        foreach ($this->converters as $converter) {
+            if ($converter->supports($outputFormat)) {
                 break;
-            default:
-                $this->io->error(sprintf(
-                    'Format %s not implemented yet.',
-                    $outputFormat
-                ));
+            }
+        }
 
-                return;
+        if (!$converter) {
+            $this->io->error(sprintf('Output format %s not implemented yet.', $outputFormat));
+
+            return;
         }
 
         if (file_exists($outputFile)) {
@@ -105,6 +107,9 @@ class RouteFileConverterCommand extends Command
                 return;
             }
         }
+
+        $this->io->block('Converting...');
+        $fileContent = $converter->convert($collection);
 
         file_put_contents($outputFile, $fileContent);
 
