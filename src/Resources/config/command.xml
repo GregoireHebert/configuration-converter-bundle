@@ -20,9 +20,5 @@
       <argument type="service" id="routing.loader" />
       <tag name="console.command"/>
     </service>
-
-    <service id="configuration_converter.routing_converter.fluent_dsl" class="ConfigurationConverter\Converters\Routing\FluentDSLConverter" public="false">
-      <tag name="configuration_converter.routing_converter"/>
-    </service>
   </services>
 </container>
