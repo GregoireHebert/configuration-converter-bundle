@@ -1,4 +1,5 @@
 /vendor/
+.php_cs
 .phpunit.result.cache
 /tests/Fixtures/App/var/*
 /tests/Fixtures/App/cache/*
