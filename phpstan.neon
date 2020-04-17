@@ -9,7 +9,7 @@ parameters:
         - tests/Fixtures/App/var/cache
         - src/DependencyInjection/Configuration.php
     ignoreErrors:
-        - '#Call to an undefined method Prophecy\\Prophecy\\ObjectProphecy(|.*)?::[a-zA-Z0-9_]+\(\)#'
+        - '~Call to an undefined method Prophecy\\.+~'
         # https://github.com/phpstan/phpstan/issues/1482
         -
             message: "#Call to function method_exists\\(\\) with 'Symfony\\\\\\\\Component.+' and 'removeBindings' will always evaluate to false\\.#"
