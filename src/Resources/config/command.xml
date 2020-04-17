@@ -13,5 +13,10 @@
       <argument>%api_platform.resource_class_directories%</argument>
       <tag name="console.command"/>
     </service>
+
+    <service id="configuration_converter.command.route_file" class="ConfigurationConverter\Command\RouteFileConverterCommand" autowire="false" autoconfigure="false" public="false">
+      <argument>%kernel.project_dir%</argument>
+      <argument type="service" id="routing.loader" />
+    </service>
   </services>
 </container>
