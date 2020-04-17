@@ -18,6 +18,7 @@
       <argument>%kernel.project_dir%</argument>
       <argument type="tagged_iterator" tag="configuration_converter.routing_converter"/>
       <argument type="service" id="routing.loader" />
+      <tag name="console.command"/>
     </service>
 
     <service id="configuration_converter.routing_converter.fluent_dsl" class="ConfigurationConverter\Converters\Routing\FluentDSLConverter" public="false">
