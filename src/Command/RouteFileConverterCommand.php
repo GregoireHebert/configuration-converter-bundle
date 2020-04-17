@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Command;
 
+use ConfigurationConverter\Converters\Routing\RoutingConverterInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -108,5 +109,10 @@ class RouteFileConverterCommand extends Command
         file_put_contents($outputFile, $fileContent);
 
         $this->io->success(sprintf('Written %s', $pathinfo['filename'].'.'.$outputExt));
+    }
+
+    private function addConverter(RoutingConverterInterface $converter): void
+    {
+        $this->converters[] = $converter;
     }
 }

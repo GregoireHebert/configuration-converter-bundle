@@ -14,9 +14,14 @@
       <tag name="console.command"/>
     </service>
 
-    <service id="configuration_converter.command.route_file" class="ConfigurationConverter\Command\RouteFileConverterCommand" autowire="false" autoconfigure="false" public="false">
+    <service id="configuration_converter.command.route_file" class="ConfigurationConverter\Command\RouteFileConverterCommand" public="false">
       <argument>%kernel.project_dir%</argument>
+      <argument type="tagged_iterator" tag="configuration_converter.routing_converter"/>
       <argument type="service" id="routing.loader" />
+    </service>
+
+    <service id="configuration_converter.routing_converter.fluent_dsl" class="ConfigurationConverter\Converters\Routing\FluentDSLConverter" public="false">
+      <tag name="configuration_converter.routing_converter"/>
     </service>
   </services>
 </container>
