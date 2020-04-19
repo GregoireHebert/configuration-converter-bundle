@@ -19,13 +19,13 @@ class ResourceImports implements \IteratorAggregate, \Countable
         return new \ArrayIterator($this->resources);
     }
 
-    public function addResource(ResourceImport $resource): void
-    {
-        $this->resources[] = $resource;
-    }
-
     public function count(): int
     {
         return \count($this->resources);
+    }
+
+    public function addResource(ResourceImport $resource): void
+    {
+        $this->resources[] = $resource;
     }
 }
