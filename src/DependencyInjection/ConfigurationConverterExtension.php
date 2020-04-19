@@ -27,6 +27,7 @@ final class ConfigurationConverterExtension extends Extension
         $loader->load('command.xml');
         $loader->load('encoders.xml');
         $loader->load('converters.xml');
+        $loader->load('routing_converters.xml');
         $loader->load('serializers.xml');
         $loader->load('writers.xml');
     }

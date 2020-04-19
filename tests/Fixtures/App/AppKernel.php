@@ -28,15 +28,13 @@ class AppKernel extends Kernel
 
     public function registerBundles(): array
     {
-        $bundles = [
+        return [
             new FrameworkBundle(),
             new TwigBundle(),
             new DoctrineBundle(),
             new ApiPlatformBundle(),
             new ConfigurationConverterBundle(),
         ];
-
-        return $bundles;
     }
 
     public function getProjectDir()

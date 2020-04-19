@@ -1,10 +1,12 @@
 /vendor/
+.php_cs
 .phpunit.result.cache
 /tests/Fixtures/App/var/*
 /tests/Fixtures/App/cache/*
 /tests/Fixtures/App/logs/*
 /tests/Fixtures/App/config/packages/api-platform/*
 /tests/Fixtures/App/config/packages/serialization/*
+/tests/Fixtures/App/config/routes/empty_routing_file_to_convert.php
 /dist/
 composer.lock
 /build/
