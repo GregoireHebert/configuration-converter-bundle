@@ -4,48 +4,43 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Test\Routing\Converters;
 
-use ConfigurationConverter\Command\RouteFileConverterCommand;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Console\Tester\CommandTester;
+use ConfigurationConverter\Routing\Converter\FluentDSLConverter;
+use ConfigurationConverter\Routing\Loader\YamlFileLoader;
+use PHPUnit\Framework\TestCase;
 
-class FluentDSLConverterTest extends KernelTestCase
+class FluentDSLConverterTest extends TestCase
 {
-    protected static ?CommandTester $commandTester;
-
-    protected function setUp(): void
-    {
-        self::bootKernel();
-        /** @var RouteFileConverterCommand $cmd */
-        $cmd = self::$container->get('configuration_converter.command.route_file');
-        static::assertInstanceOf(RouteFileConverterCommand::class, $cmd);
-        self::$commandTester = new CommandTester($cmd);
-    }
-
-    protected function tearDown(): void
-    {
-        self::$commandTester = null;
-        parent::tearDown();
-    }
-
     public function testFluent(): void
     {
-        $fileName = 'empty_routing_file_to_convert';
-        $outputFile = sprintf('%s/../../Fixtures/App/config/routes/%s.php', __DIR__, $fileName);
-        if (file_exists($outputFile)) {
-            unlink($outputFile);
-        }
+        $routeFile = __DIR__.'/../../Fixtures/App/config/routes/default_routing_file_to_convert.yaml';
+        $resources = (new YamlFileLoader())->load($routeFile);
+        $converter = new FluentDSLConverter();
 
-        $tester = self::$commandTester;
+        $converted = $converter->convert($resources);
 
-        $tester->execute([
-            'file' => sprintf('config/routes/%s.yaml', $fileName),
-            '--output-format' => 'fluent',
-        ]);
-
-        $display = explode("\n", $tester->getDisplay(true));
-        static::assertStringStartsWith(' Converting... ', $display[1]);
-        static::assertStringStartsWith(' [OK] Written '.$fileName.'.php ', $display[3]);
-
-        unlink($outputFile);
+        static::assertSame(<<<'CONVERTED'
+            <?php
+            use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+            
+            return function (RoutingConfigurator $routes) {
+                $routes
+                    ->add('route_one', '/one')
+                    ->controller('Any controller')
+                    ->defaults(array (
+                      'something' => 'value',
+                    ))
+                    ->requirements(array (
+                      'something' => '\\w+',
+                    ))
+                    ->condition('request.isMethod('POST')')
+                ;
+                $routes
+                    ->import('imported_resource', 'imported_file.yaml')
+                ;
+            };
+            
+            CONVERTED,
+            $converted
+        );
     }
 }
