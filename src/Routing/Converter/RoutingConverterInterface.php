@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ConfigurationConverter\Routing;
+namespace ConfigurationConverter\Routing\Converter;
 
-use ConfigurationConverter\Routing\Loader\ResourceImports;
+use ConfigurationConverter\Routing\Converter\Loader\ResourceImports;
 
 interface RoutingConverterInterface
 {

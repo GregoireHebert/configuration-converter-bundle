@@ -1,8 +1,10 @@
 <?php
 
-namespace ConfigurationConverter\Routing\Loader;
+declare(strict_types=1);
 
-use ConfigurationConverter\Routing\Resource\ResourceImport;
+namespace ConfigurationConverter\Routing\Converter\Loader;
+
+use ConfigurationConverter\Routing\Converter\Resource\ResourceImport;
 
 class ResourceImports implements \IteratorAggregate
 {

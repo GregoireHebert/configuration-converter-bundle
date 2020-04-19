@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ConfigurationConverter\Routing\Loader;
+
+use ConfigurationConverter\Routing\Converter\Loader\ResourceImports;
 
 class YamlFileLoader implements LoaderInterface
 {
@@ -11,7 +14,7 @@ class YamlFileLoader implements LoaderInterface
             return false;
         }
 
-        return \in_array(\strtolower(\pathinfo($resource, PATHINFO_EXTENSION)), ['yaml', 'yml']);
+        return \in_array(strtolower(pathinfo($resource, PATHINFO_EXTENSION)), ['yaml', 'yml'], true);
     }
 
     public function load($resource): ResourceImports

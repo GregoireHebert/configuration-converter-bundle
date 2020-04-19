@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ConfigurationConverter\Test\Converters\Routing;
+namespace ConfigurationConverter\Test\Routing\Converters;
 
 use ConfigurationConverter\Command\RouteFileConverterCommand;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class FluentDSLConverterTest extends KernelTestCase
@@ -32,22 +30,22 @@ class FluentDSLConverterTest extends KernelTestCase
     public function testFluent(): void
     {
         $fileName = 'empty_routing_file_to_convert';
-        $outputFile = sprintf("%s/../../Fixtures/App/config/routes/%s.php", __DIR__, $fileName);
-        if (\file_exists($outputFile)) {
-            \unlink($outputFile);
+        $outputFile = sprintf('%s/../../Fixtures/App/config/routes/%s.php', __DIR__, $fileName);
+        if (file_exists($outputFile)) {
+            unlink($outputFile);
         }
 
         $tester = self::$commandTester;
 
         $tester->execute([
-            'file' => sprintf("config/routes/%s.yaml", $fileName),
+            'file' => sprintf('config/routes/%s.yaml', $fileName),
             '--output-format' => 'fluent',
         ]);
 
-        $display = \explode("\n", $tester->getDisplay(true));
+        $display = explode("\n", $tester->getDisplay(true));
         static::assertStringStartsWith(' Converting... ', $display[1]);
         static::assertStringStartsWith(' [OK] Written '.$fileName.'.php ', $display[3]);
 
-        \unlink($outputFile);
+        unlink($outputFile);
     }
 }

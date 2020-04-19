@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Command;
 
-use ConfigurationConverter\Routing\Loader\LoaderInterface;
-use ConfigurationConverter\Routing\RoutingConverterInterface;
+use ConfigurationConverter\Routing\Converter\Loader\LoaderInterface;
+use ConfigurationConverter\Routing\Converter\RoutingConverterInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -87,7 +87,7 @@ class RouteFileConverterCommand extends Command
 
         $resources = $loader->load($file);
 
-        $pathinfo = \pathinfo($file);
+        $pathinfo = pathinfo($file);
 
         $outputExt = self::OUTPUT_FORMATS[$outputFormat];
 

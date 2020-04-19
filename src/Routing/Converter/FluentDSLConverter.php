@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ConfigurationConverter\Routing;
+namespace ConfigurationConverter\Routing\Converter;
 
-use ConfigurationConverter\Routing\Loader\ResourceImports;
+use ConfigurationConverter\Routing\Converter\Loader\ResourceImports;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Routing\RouteCompiler;
 
@@ -34,7 +34,6 @@ return function (RoutingConfigurator $routes) {';
         $baseSpaces = '    ';
 
         return 'KO';
-
         foreach ($routes->all() as $name => $route) {
             $space = $baseSpaces;
             $content .= "\n$space\$routes\n";
