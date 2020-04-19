@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Routing\Loader;
 
-use ConfigurationConverter\Routing\Converter\Loader\ResourceImports;
+use ConfigurationConverter\Routing\Resource\ResourceImports;
+use Symfony\Component\Yaml\Yaml;
 
 class YamlFileLoader implements LoaderInterface
 {
@@ -19,6 +20,21 @@ class YamlFileLoader implements LoaderInterface
 
     public function load($resource): ResourceImports
     {
-        dd($resource);
+        $imports = new ResourceImports();
+
+        $parsedYaml = Yaml::parseFile($resource);
+
+        if (null !== $parsedYaml && !is_array($parsedYaml)) {
+            throw new \InvalidArgumentException(\sprintf(
+                'Yaml file %s was expected to be parsed as an array, %s given.',
+                $resource, get_debug_type($parsedYaml)
+            ));
+        }
+
+        if (!$parsedYaml) {
+            return $imports;
+        }
+
+        return $imports;
     }
 }

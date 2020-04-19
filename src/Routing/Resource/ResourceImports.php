@@ -2,16 +2,14 @@
 
 declare(strict_types=1);
 
-namespace ConfigurationConverter\Routing\Converter\Loader;
+namespace ConfigurationConverter\Routing\Resource;
 
-use ConfigurationConverter\Routing\Converter\Resource\ResourceImport;
-
-class ResourceImports implements \IteratorAggregate
+class ResourceImports implements \IteratorAggregate, \Countable
 {
     /**
      * @var ResourceImport[]
      */
-    private array $resources;
+    private array $resources = [];
 
     /**
      * @return ResourceImport[]
@@ -19,5 +17,15 @@ class ResourceImports implements \IteratorAggregate
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->resources);
+    }
+
+    public function addResource(ResourceImport $resource): void
+    {
+        $this->resources[] = $resource;
+    }
+
+    public function count(): int
+    {
+        return \count($this->resources);
     }
 }

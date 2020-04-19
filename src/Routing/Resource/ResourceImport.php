@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ConfigurationConverter\Routing\Converter\Resource;
+namespace ConfigurationConverter\Routing\Resource;
 
 class ResourceImport
 {
