@@ -2,21 +2,29 @@
 
 declare(strict_types=1);
 
-namespace ConfigurationConverter\Converters\Routing;
+namespace ConfigurationConverter\Routing;
 
-use Symfony\Component\Routing\RouteCollection;
+use ConfigurationConverter\Routing\Loader\ResourceImports;
+use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Routing\RouteCompiler;
 
 class FluentDSLConverter implements RoutingConverterInterface
 {
     public const FORMAT = 'dsl';
 
+    private FileLocatorInterface $fileLocator;
+
+    public function __construct(FileLocatorInterface $fileLocator)
+    {
+        $this->fileLocator = $fileLocator;
+    }
+
     public function supports(string $outputFormat): bool
     {
         return self::FORMAT === $outputFormat;
     }
 
-    public function convert(RouteCollection $collection): string
+    public function convert(ResourceImports $imports): string
     {
         $content = '<?php
 use Symfony\\Component\\Routing\\Loader\\Configurator\\RoutingConfigurator;
@@ -25,7 +33,9 @@ return function (RoutingConfigurator $routes) {';
 
         $baseSpaces = '    ';
 
-        foreach ($collection->all() as $name => $route) {
+        return 'KO';
+
+        foreach ($routes->all() as $name => $route) {
             $space = $baseSpaces;
             $content .= "\n$space\$routes\n";
             $space .= '    ';
