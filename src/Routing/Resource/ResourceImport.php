@@ -88,14 +88,15 @@ class ResourceImport
 
         return $self;
     }
+
     public function isImport(): bool
     {
-        return $this->resource !== null;
+        return null !== $this->resource;
     }
 
     public function isRoute(): bool
     {
-        return $this->path !== null;
+        return null !== $this->path;
     }
 
     public function getName(): string

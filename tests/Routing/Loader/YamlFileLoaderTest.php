@@ -34,7 +34,7 @@ class YamlFileLoaderTest extends TestCase
         $routeFile = __DIR__.'/../../Fixtures/App/config/routes/invalid_file.yaml';
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(\sprintf(
+        $this->expectExceptionMessage(sprintf(
             'Yaml file %s was expected to be parsed as an array, %s given.',
             $routeFile, 'string'
         ));

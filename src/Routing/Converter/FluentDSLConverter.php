@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Routing\Converter;
 
-use ConfigurationConverter\Routing\Converter\Loader\ResourceImports;
+use ConfigurationConverter\Routing\Resource\ResourceImports;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Routing\RouteCompiler;
 

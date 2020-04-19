@@ -25,11 +25,8 @@ class YamlFileLoader implements LoaderInterface
 
         $parsedYaml = Yaml::parseFile($resource);
 
-        if (null !== $parsedYaml && !is_array($parsedYaml)) {
-            throw new \InvalidArgumentException(\sprintf(
-                'Yaml file %s was expected to be parsed as an array, %s given.',
-                $resource, get_debug_type($parsedYaml)
-            ));
+        if (null !== $parsedYaml && !\is_array($parsedYaml)) {
+            throw new \InvalidArgumentException(sprintf('Yaml file %s was expected to be parsed as an array, %s given.', $resource, get_debug_type($parsedYaml)));
         }
 
         if (!$parsedYaml) {
@@ -61,7 +58,7 @@ class YamlFileLoader implements LoaderInterface
             if (isset($config['utf8'])) {
                 $options['utf8'] = $config['utf8'];
             }
-            if (!is_array($exclude)) {
+            if (!\is_array($exclude)) {
                 $exclude = [$exclude];
             }
 
@@ -97,7 +94,6 @@ class YamlFileLoader implements LoaderInterface
                         $condition
                     )
                 );
-
             }
         }
 
