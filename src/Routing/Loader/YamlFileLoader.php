@@ -58,7 +58,7 @@ class YamlFileLoader implements LoaderInterface
             if (isset($config['utf8'])) {
                 $options['utf8'] = $config['utf8'];
             }
-            if (!\is_array($exclude)) {
+            if ($exclude && !\is_array($exclude)) {
                 $exclude = [$exclude];
             }
 
