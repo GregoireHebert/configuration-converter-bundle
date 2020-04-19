@@ -103,4 +103,69 @@ class ResourceImport
     {
         return $this->name;
     }
+
+    public function getPath(): ?string
+    {
+        return $this->path;
+    }
+
+    public function getHost(): ?string
+    {
+        return $this->host;
+    }
+
+    public function getSchemes(): array
+    {
+        return $this->schemes;
+    }
+
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
+    public function getDefaults(): array
+    {
+        return $this->defaults;
+    }
+
+    public function getRequirements(): array
+    {
+        return $this->requirements;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    public function getCondition(): ?string
+    {
+        return $this->condition;
+    }
+
+    public function getResource(): ?string
+    {
+        return $this->resource;
+    }
+
+    public function getPrefix(): ?string
+    {
+        return $this->prefix;
+    }
+
+    public function trailingSlashOnRoot(): bool
+    {
+        return $this->trailingSlashOnRoot;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function getExclude(): ?array
+    {
+        return $this->exclude;
+    }
 }
