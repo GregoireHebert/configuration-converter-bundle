@@ -62,5 +62,14 @@ class YamlFileLoaderTest extends TestCase
         static::assertTrue($loader->supports($routeFile));
 
         $resources = $loader->load($routeFile);
+
+        static::assertCount(2, $resources);
+
+        $iterator = $resources->getIterator();
+
+        static::assertTrue($iterator[0]->isRoute());
+        static::assertSame('route_one', $iterator[0]->getName());
+        static::assertTrue($iterator[1]->isImport());
+        static::assertSame('imported_resource', $iterator[1]->getName());
     }
 }
