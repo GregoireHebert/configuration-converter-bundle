@@ -1,0 +1,11 @@
+route_one:
+    path: /one
+    controller: Any controller
+    defaults:
+        something: 'value'
+    condition: request.isMethod('POST')
+    requirements:
+        something: \w+
+
+imported_resource:
+    resource: imported_file.yaml
