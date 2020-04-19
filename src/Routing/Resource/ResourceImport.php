@@ -9,7 +9,7 @@ class ResourceImport
     private string $name;
 
     // Route specific
-    private ?string $path;
+    private ?string $path = null;
     private ?string $host;
     private array $schemes;
     private array $methods;
@@ -19,7 +19,7 @@ class ResourceImport
     private ?string $condition;
 
     // Import specific
-    private ?string $resource;
+    private ?string $resource = null;
     private ?string $prefix;
     private bool $trailingSlashOnRoot;
     private ?string $type;
