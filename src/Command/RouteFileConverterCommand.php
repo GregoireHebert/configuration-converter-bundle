@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace ConfigurationConverter\Command;
 
-use ConfigurationConverter\Converters\Routing\RoutingConverterInterface;
-use Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader;
+use ConfigurationConverter\Routing\Loader\LoaderInterface;
+use ConfigurationConverter\Routing\RoutingConverterInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Routing\RouteCollection;
 
 class RouteFileConverterCommand extends Command
 {
@@ -36,17 +35,21 @@ class RouteFileConverterCommand extends Command
 
     private SymfonyStyle $io;
     private string $projectDir;
-    private DelegatingLoader $routingLoader;
 
     /** @var RoutingConverterInterface[] */
     private array $converters = [];
 
-    public function __construct(string $projectDir, iterable $converters, DelegatingLoader $routingLoader)
+    /** @var LoaderInterface[] */
+    private array $loaders;
+
+    public function __construct(string $projectDir, iterable $converters, iterable $loaders)
     {
         $this->projectDir = $projectDir;
-        $this->routingLoader = $routingLoader;
         foreach ($converters as $converter) {
             $this->addConverter($converter);
+        }
+        foreach ($loaders as $loader) {
+            $this->addLoader($loader);
         }
         parent::__construct(self::$defaultName);
     }
@@ -80,27 +83,17 @@ class RouteFileConverterCommand extends Command
 
     private function convertFile(string $file, string $outputFormat): void
     {
-        /** @var RouteCollection $collection */
-        $collection = $this->routingLoader->load($file);
+        $loader = $this->getLoader($file);
 
-        $pathinfo = pathinfo($file);
+        $resources = $loader->load($file);
+
+        $pathinfo = \pathinfo($file);
 
         $outputExt = self::OUTPUT_FORMATS[$outputFormat];
 
         $outputFile = $pathinfo['dirname'].'/'.$pathinfo['filename'].'.'.$outputExt;
 
-        $converter = null;
-        foreach ($this->converters as $converter) {
-            if ($converter->supports($outputFormat)) {
-                break;
-            }
-        }
-
-        if (!$converter) {
-            $this->io->error(sprintf('Output format %s not implemented yet.', $outputFormat));
-
-            return;
-        }
+        $converter = $this->getConverter($outputFormat);
 
         if (file_exists($outputFile)) {
             if (!$this->io->confirm(sprintf('File <info>%s</info> already exists. Overwrite?', $outputFile))) {
@@ -109,7 +102,7 @@ class RouteFileConverterCommand extends Command
         }
 
         $this->io->block('Converting...');
-        $fileContent = $converter->convert($collection);
+        $fileContent = $converter->convert($resources);
 
         file_put_contents($outputFile, $fileContent);
 
@@ -119,5 +112,32 @@ class RouteFileConverterCommand extends Command
     private function addConverter(RoutingConverterInterface $converter): void
     {
         $this->converters[] = $converter;
+    }
+
+    private function addLoader(LoaderInterface $loader): void
+    {
+        $this->loaders[] = $loader;
+    }
+
+    private function getLoader(string $file): LoaderInterface
+    {
+        foreach ($this->loaders as $loader) {
+            if ($loader->supports($file)) {
+                return $loader;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('No loader found capable of loading file %s.', $file));
+    }
+
+    private function getConverter(string $outputFormat): RoutingConverterInterface
+    {
+        foreach ($this->converters as $converter) {
+            if ($converter->supports($outputFormat)) {
+                return $converter;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Output format %s not implemented yet.', $outputFormat));
     }
 }
